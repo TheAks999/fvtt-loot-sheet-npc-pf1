@@ -234,7 +234,7 @@ export class LootSheetActions {
     let sellerModifier = seller.getFlag("lootsheetnpcpf1", "priceModifier");
     if (!sellerModifier) sellerModifier = 1.0;
 
-    let itemCost = LootSheetActions.getItemCost(sellItem)
+    let itemCost = LootSheetActions.getItemCost(sellItem.data)
     itemCost = itemCost * sellerModifier;
     itemCost *= quantity;
     let buyerFunds = duplicate(buyer.data.data.currency);
@@ -265,7 +265,7 @@ export class LootSheetActions {
     
     // make sure that coins is a number (not a float)
     while(!Number.isInteger(itemCost)) {
-      console.log(itemCost)
+
       itemCost *= 10;
       for (const key in conversionRate) {
         conversionRate[key] *= 10

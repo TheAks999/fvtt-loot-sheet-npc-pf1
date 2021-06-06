@@ -56,7 +56,8 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
     
     const giver = game.actors.get(data.actorId)
     const receiver = game.actors.get(actorDestId)
-    const item = giver.getEmbeddedDocument("Item", data.data.id);
+    const item = giver.getEmbeddedDocument("Item", data.data._id);
+    if(!item) return;
     
     // validate the type of item to be "moved" or "added"
     if(!["weapon","equipment","consumable","loot"].includes(item.type)) {
@@ -70,6 +71,7 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
         targetGm = u;
       }
     });
+    if(!targetGm) return;
     
     //if (data.actorId === actorDestId) {
     //  ui.notifications.error(game.i18n.localize("ERROR.lsWhyGivingToYourself"));
@@ -97,18 +99,22 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
       options['acceptLabel'] = game.i18n.localize("ls.give");
     }
     
+    // constants required to pass ad
+    const gmId = targetGm._id
+    const dta = data
+    
     let d = new QuantityDialog((quantity) => {
     
       if( game.user.isGM ) {
-        LootSheetActions.giveItem(game.user, data.actorId, actorDestId, data.data._id, quantity)
+        LootSheetActions.giveItem(game.user, dta.actorId, actorDestId, dta.data._id, quantity)
       } else {
         const packet = {
           type: "give",
           userId: game.user._id,
-          actorId: data.actorId,
-          itemId: data.data._id,
+          actorId: dta.actorId,
+          itemId: dta.data._id,
           targetActorId: actorDestId,
-          processorId: targetGm.id,
+          processorId: gmId,
           quantity: quantity
         };
         console.log(`Loot Sheet | Sending packet to ${actorDestId}`)
