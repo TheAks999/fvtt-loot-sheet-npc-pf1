@@ -47,13 +47,14 @@ export class LootSheetActions {
    */
   static moveItem(source, destination, itemId, quantity) {
     //console.log("Loot Sheet | moveItem")
-    let item = source.getEmbeddedEntity("OwnedItem", itemId);
+    let item = source.getEmbeddedDocument("Item", itemId);
     
     if(!item) {
       ui.notifications.warn(game.i18n.format("ERROR.lsInvalidMove", { actor: source.name }));
       console.log(source, destination, itemId)
       return null;
     }
+    item = item.data // migration to 0.8.x
     
     if(!quantity) {
       quantity = item.data.quantity
@@ -80,14 +81,14 @@ export class LootSheetActions {
 
       let removeEmptyStacks = game.settings.get("lootsheetnpcpf1", "removeEmptyStacks");
       if (update["data.quantity"] === 0 && removeEmptyStacks) {
-        source.deleteEmbeddedEntity("OwnedItem", itemId);
+        source.deleteEmbeddedDocuments("Item", [itemId]);
       } else {
-        source.updateEmbeddedEntity("OwnedItem", update);
+        source.updateEmbeddedDocuments("Item", [update]);
       }
     }
 
     newItem.data.quantity = quantity;
-    destination.createEmbeddedEntity("OwnedItem", newItem);
+    destination.createEmbeddedDocuments("Item", [newItem]);
     newItem.showName = LootSheetActions.getItemName(newItem)
     newItem.showCost = LootSheetActions.getItemCost(newItem)
     
@@ -222,7 +223,7 @@ export class LootSheetActions {
   static async transaction(speaker, seller, buyer, itemId, quantity) {
     console.log("Loot Sheet | Transaction")
 
-    let sellItem = seller.getEmbeddedEntity("OwnedItem", itemId);
+    let sellItem = seller.getEmbeddedDocument("Item", itemId);
 
 
     // If the buyer attempts to buy more then what's in stock, buy all the stock.
@@ -264,6 +265,7 @@ export class LootSheetActions {
     
     // make sure that coins is a number (not a float)
     while(!Number.isInteger(itemCost)) {
+      console.log(itemCost)
       itemCost *= 10;
       for (const key in conversionRate) {
         conversionRate[key] *= 10

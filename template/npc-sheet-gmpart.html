@@ -9,7 +9,7 @@
                         <div class="flexcol"><h4 class="sheet-name">{{localize "ls.typeOfSheet"}}:</h4></div>
                         <div class="flexcol">
                             <select class="sheet-type" name="flags.lootsheetnpcpf1.lootsheettype">
-                                {{#select actor.flags.lootsheetnpcpf1.lootsheettype}}
+                                {{#select flags.lootsheetnpcpf1.lootsheettype}}
                                     <option value="Loot">{{localize "ls.typeLoot"}}</option>
                                     <option value="Merchant">{{localize "ls.typeMerchant"}}</option>
                                 {{/select}}
@@ -20,12 +20,12 @@
                 
                 <h3 class="gm-header"><i class="fas fa-users"></i> {{localize "ls.permissions"}} <i class="fas fa-info-circle help" onclick="$('.permission-info').toggle();"></i></h3>
                 <div class="permission-info">{{localize "ls.permissionsInfo"}}</div>
-                {{#if actor.flags.loot.warning}}
+                {{#if flags.loot.warning}}
                   <div class="warning">{{localize "ERROR.lsInvalidParentPermission"}}</div>
                 {{/if}}
-                {{#unless actor.flags.loot.warning}}
+                {{#unless flags.loot.warning}}
                 <ol class="permissions-list">
-                    {{#each actor.flags.loot.players as |player p|}}
+                    {{#each flags.loot.players as |player p|}}
                         <li class="permission">
                             <input type="hidden" name="{{player.playerId}}" value="{{player.lootPermission}}" data-dtype="Number" actor="{{player.actorId}}"/>
                             <a class="permission-proficiency" title="{{player.lootPermissionDescription}}">{{{player.icon}}}</a>
@@ -44,26 +44,26 @@
                     <h3 class="gm-header"><i class="fas fa-tools"></i> {{localize "ls.lsOptions"}}</h3>
                     <div class="flexrow">
                         <div class="flexcol"><h4>{{localize "ls.enableDragging"}} <i class="fas fa-info-circle help" title="{{localize "ls.enableDraggingTooltip"}}"></i></h4></div>
-                        <div class="flexcol"><input name="flags.lootsheetnpcpf1.dragEnabled" type="checkbox" value="{{actor.flags.lootsheetnpcpf1.dragEnabled}}" {{#if actor.flags.lootsheetnpcpf1.dragEnabled}}checked{{/if}} /></div>
+                        <div class="flexcol"><input name="data.flags.lootsheetnpcpf1.dragEnabled" type="checkbox" value="{{flags.lootsheetnpcpf1.dragEnabled}}" {{#if flags.lootsheetnpcpf1.dragEnabled}}checked{{/if}} /></div>
                     </div>
                     <div class="flexrow">
                         <div class="flexcol"><h4>{{localize "ls.maxCapacity"}} <i class="fas fa-info-circle help" title="{{localize "ls.maxCapacityTooltip"}}"></i></h4></div>
-                        <div class="flexcol"><input name="flags.lootsheetnpcpf1.maxCapacity" type="text" data-dtype="Number" placeholder="e.g. 10" value="{{actor.flags.lootsheetnpcpf1.maxCapacity}}"/></div>
+                        <div class="flexcol"><input name="data.flags.lootsheetnpcpf1.maxCapacity" type="text" data-dtype="Number" placeholder="e.g. 10" value="{{flags.lootsheetnpcpf1.maxCapacity}}"/></div>
                     </div>
                     <div class="flexrow">
                         <div class="flexcol"><h4>{{localize "ls.maxLoad"}} <i class="fas fa-info-circle help" title="{{localize "ls.maxLoadTooltip"}}"></i></h4></div>
-                        <div class="flexcol"><input name="flags.lootsheetnpcpf1.maxLoad" type="text" data-dtype="Number" placeholder="e.g. 200" value="{{actor.flags.lootsheetnpcpf1.maxLoad}}"/></div>
+                        <div class="flexcol"><input name="data.flags.lootsheetnpcpf1.maxLoad" type="text" data-dtype="Number" placeholder="e.g. 200" value="{{flags.lootsheetnpcpf1.maxLoad}}"/></div>
                     </div>
                     <h3 class="gm-header"><i class="fas fa-coins"></i> {{localize "ls.coinDistribution"}}</h3>
                     <ol class="coins-list">
-                        {{#each actor.flags.loot.currency as |c i|}}
+                        {{#each flags.loot.currency as |c i|}}
                             <li class="denomination {{i}}">
                                 <label>{{ lookup ../config.currencies i }}:</label>
                                 <h4 class="denomination-value">{{c}} {{localize "ls.each"}}</h4>
                             </li>
                         {{/each}}
                     </ol>
-                    <button class= "split-coins" type="split-coins" name="split-coins" value="1"><i class="fa fa-coins"></i> {{localize "ls.splitBy"}} {{actor.flags.loot.ownerCount}}</button>
+                    <button class= "split-coins" type="split-coins" name="split-coins" value="1"><i class="fa fa-coins"></i> {{localize "ls.splitBy"}} {{flags.loot.ownerCount}}</button>
                 {{/ifeq}}
 
                 {{#ifeq lootsheettype "Merchant"}}
@@ -75,7 +75,7 @@
                             <div class="flexcol">
                                 <select class="sheet-rolltable" name="flags.lootsheetnpcpf1.rolltable">
                                     <option value="">{{localize "ls.chooseTable"}}</option>
-                                    {{#select actor.flags.lootsheetnpcpf1.rolltable}}
+                                    {{#select flags.lootsheetnpcpf1.rolltable}}
                                         {{#each rolltables as |table i|}}
                                             <option value="{{table.name}}">{{table.name}}</option>
                                         {{/each}}
@@ -85,11 +85,11 @@
                         </div>
                         <div class="flexrow">
                             <div class="flexcol"><h4>{{localize "ls.shopQtyFormula"}}: </h4></div>
-                            <div class="flexcol"><input name="flags.lootsheetnpcpf1.shopQty" type="text" data-dtype="String" placeholder="e.g. 1d20" value="{{actor.flags.lootsheetnpcpf1.shopQty}}"/></div>
+                            <div class="flexcol"><input name="flags.lootsheetnpcpf1.shopQty" type="text" data-dtype="String" placeholder="e.g. 1d20" value="{{flags.lootsheetnpcpf1.shopQty}}"/></div>
                         </div>
                         <div class="flexrow">
                             <div class="flexcol"><h4>{{localize "ls.itemQtyFormula"}}: </h4></div>
-                            <div class="flexcol"><input name="flags.lootsheetnpcpf1.itemQty" type="text" data-dtype="String" placeholder="e.g. 1d4" value="{{actor.flags.lootsheetnpcpf1.itemQty}}"/></div>
+                            <div class="flexcol"><input name="flags.lootsheetnpcpf1.itemQty" type="text" data-dtype="String" placeholder="e.g. 1d4" value="{{flags.lootsheetnpcpf1.itemQty}}"/></div>
                         </div>
                     </div>
                     <button class="update-inventory" type="update-inventory" name="update-inventory" value="1"><i class="fas fa-balance-scale"></i> {{localize "ls.updateShopInventory"}} </button>

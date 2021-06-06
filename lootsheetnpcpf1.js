@@ -56,7 +56,7 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
     
     const giver = game.actors.get(data.actorId)
     const receiver = game.actors.get(actorDestId)
-    const item = giver.getEmbeddedEntity("OwnedItem", data.data._id);
+    const item = giver.getEmbeddedDocument("Item", data.data.id);
     
     // validate the type of item to be "moved" or "added"
     if(!["weapon","equipment","consumable","loot"].includes(item.type)) {

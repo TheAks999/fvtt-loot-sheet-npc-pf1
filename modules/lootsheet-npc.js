@@ -65,10 +65,15 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
   }
 
   async getData() {
+    console.log("Loot Sheet | getData")
+    
     const sheetData = await super.getData();
+    
+    // https://foundryvtt.wiki/en/migrations/foundry-core-0_8_x
+    sheetData.flags = sheetData.actor.data.flags
 
     // Prepare GM Settings
-    this._prepareGMSettings(sheetData.actor);
+    sheetData.flags.loot = this._prepareGMSettings(sheetData.actor.data);
     //console.log(sheetData)
 
     // Prepare isGM attribute in sheet Data
@@ -117,8 +122,8 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
     sheetData.lootsheettype = lootsheettype;
     sheetData.rolltable = rolltable;
     sheetData.priceModifier = priceModifier;
-    sheetData.rolltables = game.tables.entities;
-    sheetData.canAct = game.user.playerId in sheetData.actor.permission && sheetData.actor.permission[game.user.playerId] == 2;
+    sheetData.rolltables = game.tables.contents;
+    sheetData.canAct = game.user.playerId in sheetData.actor.data.permission && sheetData.actor.data.permission[game.user.playerId] == 2;
     sheetData.totalItems = totalItems
     sheetData.maxItems = maxCapacity > 0 ? " / " + maxCapacity : ""
     sheetData.itemsWarning = maxCapacity <= 0 || maxCapacity >= totalItems ? "" : "warn"
@@ -127,6 +132,11 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
     sheetData.weightWarning = maxLoad <= 0 || maxLoad >= totalWeight ? "" : "warn"
     sheetData.totalPrice = totalPrice
     sheetData.weightUnit = game.settings.get("pf1", "units") == "metric" ? game.i18n.localize("PF1.Kgs") : game.i18n.localize("PF1.Lbs")
+        
+    // workaround to get all flags
+    const rolltableName = await this.actor.getFlag(LootSheetConstants.MODULENAME, "rolltable");
+    const shopQtyFormula = await this.actor.getFlag(LootSheetConstants.MODULENAME, "shopQty") || "1";
+    const itemQtyFormula = await this.actor.getFlag(LootSheetConstants.MODULENAME, "itemQty") || "1";
     
     // Return data for rendering
     return sheetData;
@@ -141,7 +151,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
    * @param html {HTML}   The prepared HTML object ready to be rendered into the DOM
    */
   async activateListeners(html) {
-    //console.log("Loot Sheet | activateListeners")
+    console.log("Loot Sheet | activateListeners")
     super.activateListeners(html);
     
     const dragEnabled = await this.actor.getFlag(LootSheetConstants.MODULENAME, "dragEnabled");
@@ -222,17 +232,30 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
   /*  Form Submission                             */
   /* -------------------------------------------- */
 
-  _updateObject(event, formData) {
-    super._updateObject(event, formData);
-    let flags = Object.entries(formData).filter(e => e[0].startsWith("flags."));
-    let actor = this.object
+  async _updateObject(event, formData) {
+    let flags = Object.entries(formData).filter(e => e[0].startsWith("data.flags."));
     for(let i=0; i<flags.length; i++) {
       const name = flags[i][0].split(".")
       const value = flags[i][1]
-      if( name.length == 3 ) {
-        actor.setFlag(name[1], name[2], value)
+      if( name.length == 4 ) { // Ex : data.flags.lootsheetnpcpf1.dragEnabled
+        // check if has changed
+        if(this.actor.getFlag(name[2], name[3]) != value) {
+          console.log(`Setting flag ${name[2]}.${name[3]} to ${value}`)
+          await this.actor.setFlag(name[2], name[3], value)
+        }
       }
     }
+    
+    return super._updateObject(event, formData);
+  }
+  
+  /**
+   * Required because PF1 _onSubmit tries to updateItems too, which blocks close operation and do other side effects
+   */
+  async _onSubmit(event, { updateData = null, preventClose = false, preventRender = false } = {}) {
+    event.preventDefault();
+    this._submitQueued = false;
+    await super._onSubmit(event, { updateData, preventClose, preventRender });
   }
 
 
@@ -269,7 +292,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
     if (clearInventory) {
 
       let currentItems = this.actor.data.items.map(i => i._id);
-      await this.actor.deleteEmbeddedEntity("OwnedItem", currentItems);
+      await this.actor.deleteEmbeddedDocuments("Item", currentItems);
     }
     //return;
     let shopQtyRoll = new Roll(shopQtyFormula);
@@ -303,7 +326,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
       console.log(`Loot Sheet | Adding ${itemQtyRoll.result} x ${newItem.name}`)
       newItem.data.data.quantity = Number(itemQtyRoll.result);
 
-      await this.actor.createEmbeddedEntity("OwnedItem", newItem);
+      await this.actor.createEmbeddedDocuments("Item", newItem);
     }
   }
 
@@ -517,7 +540,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
   _toggleVisibility(event) {
     event.preventDefault();
     let itemId = $(event.currentTarget).parents(".item").attr("data-item-id");
-    let item = this.actor.getOwnedItem(itemId);
+    let item = this.actor.items.get(itemId);
     if(item) {
       if(!item.getFlag(LootSheetConstants.MODULENAME, "secret")) {
         item.setFlag(LootSheetConstants.MODULENAME, "secret", true);
@@ -536,7 +559,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
   _toggleInfiniteQuantity(event) {
     event.preventDefault();
     let itemId = $(event.currentTarget).parents(".item").attr("data-item-id");
-    let item = this.actor.getOwnedItem(itemId);
+    let item = this.actor.items.get(itemId);
     if(item) {
       if(!item.getFlag(LootSheetConstants.MODULENAME, "infinite")) {
         item.setFlag(LootSheetConstants.MODULENAME, "infinite", true);
@@ -568,13 +591,13 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
         let deleteList = []
         this.actor.items.forEach( item  => {
           totalGP += LootSheetActions.getItemSaleValue(item)
-          deleteList.push(item._id)
+          deleteList.push(item.id)
         });
 
         let funds = LootSheetActions.spreadFunds(totalGP, duplicate(this.actor.data.data.currency));
 
         await this.actor.update({ "data.currency": funds });
-        await this.actor.deleteEmbeddedEntity("OwnedItem", deleteList)
+        await this.actor.deleteEmbeddedDocuments("Item", deleteList)
       },
       no: () => {}
     });
@@ -604,7 +627,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
           //console.log("Loot Sheet | player", player);
           let actor = game.actors.get(player.data.character);
           //console.log("Loot Sheet | actor", actor);
-          if (actor !== null && (player.data.role === 1 || player.data.role === 2)) owners.push(actor);
+          if (actor && (player.data.role === 1 || player.data.role === 2)) owners.push(actor);
         }
       }
     }
@@ -637,6 +660,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
       if (u === null) continue;
 
       msg = [];
+      console.log(u)
       let currency = u.data.data.currency;
       let altCurrency = u.data.data.altCurrency;
       let newCurrency = duplicate(u.data.data.currency);
@@ -764,7 +788,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
 
     };
     
-    actorData.actor.visible = this.actor.visible
+    //actorData.actor.visible = this.actor.visible
     
     if (!this.actor.visible) {
       actorData.actor.features = features;
@@ -845,7 +869,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
 
     const players = [],
       owners = [];
-    let users = game.users.entities;
+    let users = game.users.contents;
 
     //console.log("Loot Sheet _prepareGMSettings | actorData.permission", actorData.permission);
 
@@ -921,7 +945,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
     loot.ownerCount = owners.length;
     loot.currency = currencySplit;
     loot.altCurrency = altCurrencySplit;
-    actorData.flags.loot = loot;
+    return loot
   }
 
   async _onDrop(event) {
