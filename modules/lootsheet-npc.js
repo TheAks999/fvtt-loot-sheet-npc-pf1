@@ -6,6 +6,8 @@ import { QuantityDialog } from "./quantity-dialog.js";
 
 export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
 
+  static DEFAULT_TOKEN = "icons/svg/mystery-man.svg"
+  
   get template() {
     // adding the #equals and #unequals handlebars helper
     Handlebars.registerHelper('equals', function(arg1, arg2, options) {
@@ -798,7 +800,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
     
     // Iterate through items, allocating to containers
     for (let i of actorData.items) {
-      i.img = i.img || DEFAULT_TOKEN;
+      i.img = i.img || LootSheetPf1NPC.DEFAULT_TOKEN;
       i.showPrice = this.getLootPrice(i)
       i.showName = this.getLootName(i)
       
