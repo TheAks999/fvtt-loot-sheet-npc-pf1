@@ -420,7 +420,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
       let d = new QuantityDialog((quantity) => {
         const packet = {
           type: "buy",
-          userId: game.user._id,
+          userId: game.user.id,
           actorId: game.user.actorId,
           tokenId: this.token ? this.token.id : undefined,
           targetActorId: this.token ? undefined : this.actor.id,
@@ -476,7 +476,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
       let d = new QuantityDialog((quantity) => {
         const packet = {
           type: "loot",
-          userId: game.user._id,
+          userId: game.user.id,
           actorId: game.user.actorId,
           tokenId: this.token ? this.token.id : undefined,
           targetActorId: this.token ? undefined : this.actor.id,
@@ -689,7 +689,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
         let message = game.i18n.format("ls.receives", {actor: u.data.name});
         message += msg.join(",");
         ChatMessage.create({
-          user: game.user._id,
+          user: game.user.id,
           speaker: {
             actor: this.actor,
             alias: this.actor.name
@@ -990,7 +990,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
       if(targetGm && data.actorId && data.data && data.data._id) {
         const packet = {
           type: "drop",
-          userId: game.user._id,
+          userId: game.user.id,
           actorId: data.actorId,
           itemId: data.data._id,
           tokenId: this.token ? this.token.id : undefined,
