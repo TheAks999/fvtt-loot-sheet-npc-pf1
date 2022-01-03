@@ -2,12 +2,20 @@
   "name": "lootsheetnpcpf1",
   "title": "Loot Sheet NPC Pathfinder1",
   "description": "This module adds an additional NPC sheet which can be used for loot containers such as chests or shopkeepers.",
-  "version": "2.2.0",
   "author": "Sven Werlen (originally from Jan Ole Peek (ChalkOne) and Charles Miller (Kage))",
-  "systems": ["pf1"],
-  "esmodules": ["/lootsheetnpcpf1.js"],
-  "styles": ["/css/lootsheetnpcpf1.css"],
-  "minimumSystemVersion": "0.77.22",
+  "authors": [],
+  "url": "https://github.com/SvenWerlen/fvtt-loot-sheet-npc-pf1",
+  "flags": {},
+  "version": "2.2.0",
+  "minimumCoreVersion": "9",
+  "compatibleCoreVersion": "9",
+  "scripts": [],
+  "esmodules": [
+    "/lootsheetnpcpf1.js"
+  ],
+  "styles": [
+    "/css/lootsheetnpcpf1.css"
+  ],
   "languages": [
     {
       "lang": "en",
@@ -25,10 +33,16 @@
       "path": "lang/it.json"
     }
   ],
+  "packs": [],
+  "system": [
+    "pf1"
+  ],
+  "dependencies": [],
   "socket": true,
-  "url": "https://github.com/SvenWerlen/fvtt-loot-sheet-npc-pf1",
-  "download": "https://github.com/SvenWerlen/fvtt-loot-sheet-npc-pf1/archive/v-2.2.0.zip",
   "manifest": "https://raw.githubusercontent.com/SvenWerlen/fvtt-loot-sheet-npc-pf1/master/module.json",
-  "minimumCoreVersion": "0.8.6",
-  "compatibleCoreVersion": "0.8.6"
+  "download": "https://github.com/SvenWerlen/fvtt-loot-sheet-npc-pf1/archive/v-2.2.0.zip",
+  "protected": false,
+  "coreTranslation": false,
+  "minimumSystemVersion": "0.80.2",
+  "library": false
 }
