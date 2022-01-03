@@ -543,11 +543,15 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
     let itemId = $(event.currentTarget).parents(".item").attr("data-item-id");
     let item = this.actor.items.get(itemId);
     if(item) {
+      console.log(item.getFlag(LootSheetConstants.MODULENAME, "secret"))
       if(!item.getFlag(LootSheetConstants.MODULENAME, "secret")) {
         item.setFlag(LootSheetConstants.MODULENAME, "secret", true);
       } else {
-        item.unsetFlag(LootSheetConstants.MODULENAME, "secret");
+        item.setFlag(LootSheetConstants.MODULENAME, "secret", false);
+        // unset flag doesn't work???
+        //item.unsetFlag(LootSheetConstants.MODULENAME, "secret");
       }
+      console.log(item)
     }
   }
   
