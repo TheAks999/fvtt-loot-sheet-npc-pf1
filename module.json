@@ -14,7 +14,7 @@
   "compatibleCoreVersion": "9",
   "scripts": [],
   "esmodules": [
-    "/advancedlootsheetpf1.js"
+    "scripts/advancedlootsheetpf1.js"
   ],
   "styles": [
     "/css/advancedlootsheetpf1.css"
