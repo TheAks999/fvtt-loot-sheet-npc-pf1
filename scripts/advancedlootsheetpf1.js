@@ -2,9 +2,9 @@
  * Adapted for PF1 system from original module: https://github.com/jopeek/fvtt-loot-sheet-npc-5e
  */ 
 
-import { LootSheetActions } from "./modules/actions.js";
-import { LootSheetConstants } from "./modules/constants.js";
-import { QuantityDialog } from "./modules/quantity-dialog.js";
+import { LootSheetActions } from "../modules/actions.js";
+import { LootSheetConstants } from "../modules/constants.js";
+import { QuantityDialog } from "../modules/quantity-dialog.js";
 
 // Module's entry point
 Hooks.on("ready", async () => {
