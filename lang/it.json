@@ -64,7 +64,7 @@
   "ls.priceModifierText": "Usa questo cursore per aumentare o diminuire il prezzo di tutti gli articoli in questo inventario.",
   
   "ls.convertLootTitle": "Converti in Monete",
-  "ls.convertLootMessage": "Sei sicuro di voler convertire tutti gli oggetti in monete? Gli articoli saranno venduti al 50% del loro prezzo (eccetto la merce di scambio). Gli articoli non identificati verranno venduti in base al costo da non identificato.",
+  "ls.convertLootMessage": "Sei sicuro di voler convertire tutti gli oggetti in monete? Gli articoli saranno venduti al {saleValue}% del loro prezzo (eccetto la merce di scambio). Gli articoli non identificati verranno venduti in base al costo da non identificato.",
   
   "ls.lootName": "Nome Mercante/Bottino",
   "ls.noAccesToSheet": "Non hai accesso alla scheda di quel Bottino/Mercante!",
@@ -108,6 +108,8 @@
   "ls.maxCapacityTooltip": "Massimo numero di oggetti nel bottino (vuoto o 0 = illimitato)",
   "ls.maxLoad": "Carico Massimo",
   "ls.maxLoadTooltip": "Massimo peso supportato dal bottino (vuoto o 0 = illimitato)",
+  "ls.saleValue": "Valore di vendita",
+  "ls.saleValueTooltip": "La percentuale di valore per cui verranno venduti i beni non commerciali (vuoto significa 50%)",
   
   "ls.pp": "mp",
   "ls.gp": "mo",

@@ -64,7 +64,7 @@
   "ls.priceModifierText": "Utiliser le curseur pour augmenter ou réduire le prix de tous les objets de l'inventaire.",
   
   "ls.convertLootTitle": "Convertir en pièces",
-  "ls.convertLootMessage": "Êtes-vous sûr de vouloir convertir tous les objets en pièces d'or? Les objets seront vendus pour 50% de leur valeur (sauf les objets d'échange). Les objets non-identifiés seront vendus à leur prix non-identifié (si disponible).",
+  "ls.convertLootMessage": "Êtes-vous sûr de vouloir convertir tous les objets en pièces d'or? Les objets seront vendus pour {saleValue}% de leur valeur (sauf les objets d'échange). Les objets non-identifiés seront vendus à leur prix non-identifié (si disponible).",
   
   "ls.lootName": "Nom du Marchant/Butin",
   "ls.noAccesToSheet": "Vous n'avez pas accès à cette feuille de marchant/butin!",
@@ -107,6 +107,8 @@
   "ls.maxCapacityTooltip": "Nombre d'objets maximum dans le butin (vide ou 0 signifie aucune limite)",
   "ls.maxLoad": "Charge max",
   "ls.maxLoadTooltip": "Poids maximal qui peut être déposé dans le butin (vide ou 0 signifie aucune limite)",
+  "ls.saleValue": "Valeur de vente",
+  "ls.saleValueTooltip": "Le pourcentage de la valeur pour laquelle les biens non commerciaux seront vendus (vide signifie 50 %)",
   
   "ls.pp": "pp",
   "ls.gp": "po",

@@ -109,6 +109,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
     let totalPrice = 0
     let maxCapacity = await this.actor.getFlag(LootSheetConstants.MODULENAME, "maxCapacity") || 0;
     let maxLoad = await this.actor.getFlag(LootSheetConstants.MODULENAME, "maxLoad") || 0;
+    let saleValue = await this.actor.getFlag(LootSheetConstants.MODULENAME, "saleValue") || 50;
     
     Object.keys(sheetData.actor.features).forEach( f => sheetData.actor.features[f].items.forEach( i => {  
       // specify if empty
@@ -134,6 +135,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
     sheetData.weightWarning = maxLoad <= 0 || maxLoad >= totalWeight ? "" : "warn"
     sheetData.totalPrice = totalPrice
     sheetData.weightUnit = game.settings.get("pf1", "units") == "metric" ? game.i18n.localize("PF1.Kgs") : game.i18n.localize("PF1.Lbs")
+    sheetData.saleValue = saleValue < 0 ? 0 : saleValue;
         
     // workaround to get all flags
     const rolltableName = await this.actor.getFlag(LootSheetConstants.MODULENAME, "rolltable");
@@ -590,12 +592,13 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
      
     Dialog.confirm({
       title: game.i18n.localize("ls.convertLootTitle"),
-      content: game.i18n.localize("ls.convertLootMessage"),
+      content: game.i18n.format("ls.convertLootMessage", {saleValue: this.actor.getFlag(LootSheetConstants.MODULENAME, "saleValue")}),
       yes: async () => {
         let totalGP = 0
         let deleteList = []
+        let saleValue = this.actor.getFlag(LootSheetConstants.MODULENAME, "saleValue") / 100;
         this.actor.items.forEach( item  => {
-          totalGP += LootSheetActions.getItemSaleValue(item)
+          totalGP += LootSheetActions.getItemSaleValue(item, saleValue)
           deleteList.push(item.id)
         });
 

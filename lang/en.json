@@ -64,7 +64,7 @@
   "ls.priceModifierText": "Use this slider to increase or decrease the price of all items in this inventory.",
   
   "ls.convertLootTitle": "Convert to coins",
-  "ls.convertLootMessage": "Are you sure you want to convert all items into coins? Items will be sold for 50% of their price (except TradeGoods). Unidentified items will be sold based on unidentified cost.",
+  "ls.convertLootMessage": "Are you sure you want to convert all items into coins? Items will be sold for {saleValue}% of their price (except TradeGoods). Unidentified items will be sold based on unidentified cost.",
   
   "ls.lootName": "Merchant/Loot Name",
   "ls.noAccesToSheet": "You don't have access to that Loot/Merchant sheet!",
@@ -108,6 +108,8 @@
   "ls.maxCapacityTooltip": "Maximum number of items in the loot (empty or 0 means unlimited)",
   "ls.maxLoad": "Max load",
   "ls.maxLoadTooltip": "Max weight that can be put in the loot (empty or 0 means unlimited)",
+  "ls.saleValue": "Sale Value",
+  "ls.saleValueTooltip": "The percentage of value that non trade goods will be sold for (empty means 50%)",
   
   "ls.pp": "pp",
   "ls.gp": "gp",

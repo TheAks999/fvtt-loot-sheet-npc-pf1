@@ -408,7 +408,7 @@ export class LootSheetActions {
   /**
    * Returns the sale value of an item
    */
-  static getItemSaleValue(item) {
+  static getItemSaleValue(item, saleValue) {
     if(item.type == "container") {
       let total = 0;
       item.items.forEach(i => total += LootSheetActions.getItemSaleValue(i))
@@ -416,7 +416,7 @@ export class LootSheetActions {
     } else if (["weapon", "equipment", "consumable", "tool", "loot"].indexOf(item.type) >= 0) {
       let itemCost = LootSheetActions.getItemCost(item.data)
       if( item.data.data.subType !== "tradeGoods" )
-        itemCost = itemCost / 2;
+        itemCost = itemCost * saleValue;
       return itemCost * item.data.data.quantity
     }
     return 0;
