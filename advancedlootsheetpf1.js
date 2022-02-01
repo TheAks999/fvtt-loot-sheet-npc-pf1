@@ -134,8 +134,8 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
 Hooks.once("init", () => {
 
   loadTemplates([
-    "modules/lootsheetnpcpf1/template/npc-sheet-gmpart.html", 
-    "modules/lootsheetnpcpf1/template/dialog-price-modifier.html"]);
+    "modules/advancedLootSheetpf1/template/npc-sheet-gmpart.html", 
+    "modules/advancedLootSheetpf1/template/dialog-price-modifier.html"]);
   
   Handlebars.registerHelper('ifeq', function(a, b, options) {
     if (a == b) {
