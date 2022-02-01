@@ -1,11 +1,8 @@
 # Loot Sheet NPC Pathfinder1
-
-<p style="color:red">DEVELOPMENT not actively supported anymore. I won't add new features and might not upgrade it to newer versions of Foundry VTT in the future!</p>
-
 This module adds an additional NPC sheet which can be used for loot containers such as chests. It also allows spells to be automatically converted into spell scrolls by dragging them onto this sheet. 
 
-This version was forked from Jan Ole Peek's module which doesn't support pf1 system (https://github.com/jopeek/fvtt-loot-sheet-npc-5e). 
-This fork will be maintained separately and specifically for Pathfinder 1 (may support PF2 in the future)
+This version was forked from Sven Werlen's module (https://github.com/SvenWerlen/fvtt-loot-sheet-npc-pf1), which was a port of Jan Ole Peek's module (https://github.com/jopeek/fvtt-loot-sheet-npc-5e) to the PF1 game system.
+This fork will be maintained separately and specifically for Pathfinder 1.
 
 ### Features
 
@@ -42,8 +39,6 @@ More features detailed below.
 
 ![Demo merchant](doc/img/merchant.gif)
 
-
-
 #### Feature for PC
 
 ##### Loot items and money
@@ -69,17 +64,12 @@ More features detailed below.
 ### Compatibility:
 - Tested with FVTT v0.6.0.
 
-### Known Issues:
-- Currently can't get back to original prices, especially if percentage is set to 0.
-- If a player has the sheet open when the GM changes the loot type, the player gets an error from FoundryVTT and must reload. This happens only the first time the type is changed.
-- When a player has 2 items and give 1 to somebody, the sheet doesn't get updated and still show (2).
-
 ### Installation Instructions
 
 To install a module, follow these instructions:
 
 1. Start FVTT and browse to the Game Modules tab in the Configuration and Setup menu
-2. Select the Install Module button and enter the following URL: https://raw.githubusercontent.com/SvenWerlen/fvtt-loot-sheet-npc-pf1/master/module.json
+2. Select the Install Module button and enter the following URL: https://raw.githubusercontent.com/Almightygir/fvtt-advanced-loot-sheet-pf1/master/module.json
 3. Click Install and wait for installation to complete 
 
 ### Feedback

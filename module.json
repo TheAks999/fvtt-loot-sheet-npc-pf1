@@ -1,20 +1,23 @@
 {
-  "name": "lootsheetnpcpf1",
-  "title": "Loot Sheet NPC Pathfinder1",
+  "name": "AdvancedLootSheetpf1",
+  "title": "Advanced Loot Sheet Pathfinder1",
   "description": "This module adds an additional NPC sheet which can be used for loot containers such as chests or shopkeepers.",
-  "author": "Sven Werlen (originally from Jan Ole Peek (ChalkOne) and Charles Miller (Kage))",
-  "authors": [],
-  "url": "https://github.com/SvenWerlen/fvtt-loot-sheet-npc-pf1",
+  "author": "Lee 'Almighty_gir' Devonald",
+  "authors": [
+    "Jan Ole Peek (ChalkOne)",
+    "Charles Miller (Kage))",
+    "Sven Werlen (Converted to PF1)"
+  ],
   "flags": {},
-  "version": "3.0.0",
+  "version": "this is auto replaced",
   "minimumCoreVersion": "9",
   "compatibleCoreVersion": "9",
   "scripts": [],
   "esmodules": [
-    "/lootsheetnpcpf1.js"
+    "/advancedlootsheetpf1.js"
   ],
   "styles": [
-    "/css/lootsheetnpcpf1.css"
+    "/css/advancedlootsheetpf1.css"
   ],
   "languages": [
     {
@@ -39,8 +42,9 @@
   ],
   "dependencies": [],
   "socket": true,
-  "manifest": "https://raw.githubusercontent.com/SvenWerlen/fvtt-loot-sheet-npc-pf1/master/module.json",
-  "download": "https://github.com/SvenWerlen/fvtt-loot-sheet-npc-pf1/archive/v-3.0.0.zip",
+  "url": "This is auto replaced",
+  "manifest": "This is auto replaced",
+  "download": "This is auto replaced",
   "protected": false,
   "coreTranslation": false,
   "minimumSystemVersion": "0.80.2",
