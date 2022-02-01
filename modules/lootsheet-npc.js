@@ -32,7 +32,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
     });
 
     const path = "systems/pf1/templates/actors/";
-    return "modules/advancedLootSheetpf1/template/npc-sheet.html";
+    return "modules/AdvancedLootSheetPF1/template/npc-sheet.html";
   }
 
   static get defaultOptions() {
@@ -241,7 +241,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
     for(let i=0; i<flags.length; i++) {
       const name = flags[i][0].split(".")
       const value = flags[i][1]
-      if( name.length == 4 ) { // Ex : data.flags.advancedLootSheetpf1.dragEnabled
+      if( name.length == 4 ) { // Ex : data.flags.AdvancedLootSheetPF1.dragEnabled
         // check if has changed
         if(this.actor.getFlag(name[2], name[3]) != value) {
           console.log(`Setting flag ${name[2]}.${name[3]} to ${value}`)
@@ -511,7 +511,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
 
     priceModifier = Math.round(priceModifier * 100);
 
-    renderTemplate("modules/advancedLootSheetpf1/template/dialog-price-modifier.html", {'priceModifier': priceModifier}).then(html => {
+    renderTemplate("modules/AdvancedLootSheetPF1/template/dialog-price-modifier.html", {'priceModifier': priceModifier}).then(html => {
       new Dialog({
         title: game.i18n.localize("ls.priceModifierTitle"),
         content: html,
@@ -592,11 +592,11 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
      
     Dialog.confirm({
       title: game.i18n.localize("ls.convertLootTitle"),
-      content: game.i18n.format("ls.convertLootMessage", {saleValue: this.actor.getFlag(LootSheetConstants.MODULENAME, "saleValue")}),
+      content: game.i18n.format("ls.convertLootMessage", {saleValue: this.actor.getFlag(LootSheetConstants.MODULENAME, "saleValue") || 50}),
       yes: async () => {
         let totalGP = 0
         let deleteList = []
-        let saleValue = this.actor.getFlag(LootSheetConstants.MODULENAME, "saleValue") / 100;
+        let saleValue = (this.actor.getFlag(LootSheetConstants.MODULENAME, "saleValue") || 50) / 100;
         this.actor.items.forEach( item  => {
           totalGP += LootSheetActions.getItemSaleValue(item, saleValue)
           deleteList.push(item.id)
@@ -811,11 +811,11 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
       i.showPrice = this.getLootPrice(i)
       i.showName = this.getLootName(i)
       
-      if (!game.user.isGM && i.flags.advancedLootSheetpf1 && i.flags.advancedLootSheetpf1.secret) {
+      if (!game.user.isGM && i.flags.AdvancedLootSheetPF1 && i.flags.AdvancedLootSheetPF1.secret) {
         continue;
       }
       
-      if (i.flags.advancedLootSheetpf1 && i.flags.advancedLootSheetpf1.infinite) {
+      if (i.flags.AdvancedLootSheetPF1 && i.flags.AdvancedLootSheetPF1.infinite) {
         i.data.quantity = 1
       }
       

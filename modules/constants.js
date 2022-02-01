@@ -2,8 +2,8 @@
 
 export class LootSheetConstants {
   
-  static MODULENAME = "advancedlootsheetpf1"
-  static SOCKET = "module.advancedlootsheetpf1";
+  static MODULENAME = "AdvancedLootSheetPF1"
+  static SOCKET = "module.AdvancedLootSheetPF1";
   
   static LootSheetPf1NPC;
 }
