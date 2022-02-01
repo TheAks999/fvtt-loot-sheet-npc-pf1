@@ -68,9 +68,11 @@ More features detailed below.
 
 To install a module, follow these instructions:
 
-1. Start FVTT and browse to the Game Modules tab in the Configuration and Setup menu
-2. Select the Install Module button and enter the following URL: https://raw.githubusercontent.com/Almightygir/fvtt-advanced-loot-sheet-pf1/master/module.json
-3. Click Install and wait for installation to complete 
+1. Start FVTT and browse to the Game Modules tab in the Configuration and Setup menu.
+2. Head to the latest release and grab the link to the latest `module.json`, the latest release can be found here: https://github.com/Almightygir/fvtt-advanced-loot-sheet-pf1/releases/latest
+3. Select the Install Module button and paste the link to the `module.json` file.
+4. Click Install and wait for installation to complete.
+5. Once installed, you can get the latest updates directly in foundry with the Update button.
 
 ### Feedback
 
