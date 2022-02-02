@@ -6,7 +6,7 @@ This module adds an additional NPC sheet which can be used for loot containers s
 This version was forked from Sven Werlen's module (https://github.com/SvenWerlen/fvtt-loot-sheet-npc-pf1), which was a port of Jan Ole Peek's module (https://github.com/jopeek/fvtt-loot-sheet-npc-5e) to the PF1 game system.
 This fork will be maintained separately and specifically for Pathfinder 1.
 
-#IMPORTANT
+# IMPORTANT
 This module is maintained entirely separately to Sven Werlen's `Loot Sheet NPC pf1` module, and while some data is compatible between the two, running them both together is not advised. If you're currently running Sven's module, you should see the installation steps below.
 
 ### Features
