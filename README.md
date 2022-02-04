@@ -1,10 +1,13 @@
 ![](https://img.shields.io/badge/Foundry-v0.9.0-informational)![Latest Release Download Count](https://img.shields.io/github/downloads/Almightygir/fvtt-advanced-loot-sheet-pf1/latest/module.zip)![Forge Installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%lootsheetnpcpf1&colorB=4aa94a)
 
-# Loot Sheet NPC Pathfinder1
-This module adds an additional NPC sheet which can be used for loot containers such as chests. It also allows spells to be automatically converted into spell scrolls by dragging them onto this sheet. 
+# Advanced Loot Sheet Pathfinder1
+This module adds an additional NPC sheet which can be used for loot containers such as chests. It also allows spells to be automatically converted into spell scrolls by dragging them onto this sheet.
 
 This version was forked from Sven Werlen's module (https://github.com/SvenWerlen/fvtt-loot-sheet-npc-pf1), which was a port of Jan Ole Peek's module (https://github.com/jopeek/fvtt-loot-sheet-npc-5e) to the PF1 game system.
 This fork will be maintained separately and specifically for Pathfinder 1.
+
+# IMPORTANT
+This module is maintained entirely separately to Sven Werlen's `Loot Sheet NPC pf1` module, and while some data is compatible between the two, running them both together is not advised. If you're currently running Sven's module, you should see the installation steps below.
 
 ### Features
 
@@ -67,6 +70,14 @@ More features detailed below.
 - Tested with FVTT v0.6.0.
 
 ### Installation Instructions
+
+#Replacing LootSheetNPCpf1
+
+To replace the `Loot Sheet NPC pf1` sheet by Sven Werlen:
+1. Follow the instructions below to install this module alongside Sven's.
+2. Before running your FoundryVTT server/session, uninstall Sven's module.
+3. After running your server, double check that your previous LootSheetNPCPf1 actors are still using the correct sheet configuration (`PF1.LootSheetPf1NPC`).
+4. If they aren't, you can change this by clicking `Sheet > This Sheet > PF1.LootSheetPf1NPC`. You may also want to change the default for sheets of that type.
 
 To install a module, follow these instructions:
 
