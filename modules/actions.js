@@ -8,7 +8,7 @@ export class LootSheetActions {
    * Displays a message into the chat log
    */
   static chatMessage(speaker, owner, message, item) {
-    if (game.settings.get("AdvancedLootSheetPF1", "buyChat")) {
+    if (game.settings.get("lootsheetnpcpf1", "buyChat")) {
       if (item) {
         message = `<div class="pf1 chat-card item-card" data-actor-id="${owner._id}" data-item-id="${item._id}">
                     <header class="card-header flexrow">
@@ -35,7 +35,7 @@ export class LootSheetActions {
    * Sends a error message to the target user
    */
   static errorMessageToActor(target, message) {
-    game.socket.emit("module.AdvancedLootSheetPF1", {
+    game.socket.emit("module.lootsheetnpcpf1", {
       type: "error",
       targetId: target.id,
       message: message
@@ -68,18 +68,18 @@ export class LootSheetActions {
     let newItem = duplicate(item);
     
     // remove unecessary flags
-    if(newItem.flags.AdvancedLootSheetPF1) {
-      delete(newItem.flags.AdvancedLootSheetPF1)
+    if(newItem.flags.lootsheetnpcpf1) {
+      delete(newItem.flags.lootsheetnpcpf1)
     }
 
     // decrease the quantity (unless infinite)
-    if(!item.flags.AdvancedLootSheetPF1 || !item.flags.AdvancedLootSheetPF1.infinite) {
+    if(!item.flags.lootsheetnpcpf1 || !item.flags.lootsheetnpcpf1.infinite) {
       const update = {
         _id: itemId,
         "data.quantity": item.data.quantity - quantity
       };
 
-      let removeEmptyStacks = game.settings.get("AdvancedLootSheetPF1", "removeEmptyStacks");
+      let removeEmptyStacks = game.settings.get("lootsheetnpcpf1", "removeEmptyStacks");
       if (update["data.quantity"] === 0 && removeEmptyStacks) {
         source.deleteEmbeddedDocuments("Item", [itemId]);
       } else {
@@ -196,7 +196,7 @@ export class LootSheetActions {
     let messageKey = ""
     let cost = moved.item.showCost;
 
-    if(container.getFlag("AdvancedLootSheetPF1", "lootsheettype") === "Merchant") {
+    if(container.getFlag("lootsheetnpcpf1", "lootsheettype") === "Merchant") {
       messageKey = "ls.chatSell"
       let sellerFunds = duplicate(giver.data.data.currency)
       if(sellerFunds && moved.item.showCost > 0) {
@@ -231,7 +231,7 @@ export class LootSheetActions {
       quantity = sellItem.data.quantity;
     }
 
-    let sellerModifier = seller.getFlag("AdvancedLootSheetPF1", "priceModifier");
+    let sellerModifier = seller.getFlag("lootsheetnpcpf1", "priceModifier");
     if (!sellerModifier) sellerModifier = 1.0;
 
     let itemCost = LootSheetActions.getItemCost(sellItem.data)

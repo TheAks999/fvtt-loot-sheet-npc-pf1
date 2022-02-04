@@ -1,5 +1,5 @@
 {
-  "name": "AdvancedLootSheetPF1",
+  "name": "lootsheetnpcpf1",
   "title": "Advanced Loot Sheet Pathfinder1",
   "description": "This module adds an additional NPC sheet which can be used for loot containers such as chests or shopkeepers.",
   "author": "Lee 'Almighty_gir' Devonald",
@@ -14,10 +14,10 @@
   "compatibleCoreVersion": "9",
   "scripts": [],
   "esmodules": [
-    "advancedlootsheetpf1.js"
+    "lootsheetnpcpf1.js"
   ],
   "styles": [
-    "/css/advancedlootsheetpf1.css"
+    "/css/lootsheetnpcpf1.css"
   ],
   "languages": [
     {
