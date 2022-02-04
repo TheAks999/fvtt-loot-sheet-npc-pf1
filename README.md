@@ -1,4 +1,4 @@
-![](https://img.shields.io/badge/Foundry-v0.9.0-informational)![Latest Release Download Count](https://img.shields.io/github/downloads/Almightygir/fvtt-advanced-loot-sheet-pf1/latest/module.zip)![Forge Installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%lootsheetnpcpf1&colorB=4aa94a)
+![](https://img.shields.io/badge/Foundry-v0.9.0-informational)![Latest Release Download Count](https://img.shields.io/github/downloads/Almightygir/fvtt-loot-sheet-npc-pf1/latest/module.zip)![Forge Installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%lootsheetnpcpf1&colorB=4aa94a)
 
 # Loot Sheet NPC Pathfinder1
 This module adds an additional NPC sheet which can be used for loot containers such as chests. It also allows spells to be automatically converted into spell scrolls by dragging them onto this sheet.
@@ -70,7 +70,7 @@ More features detailed below.
 To install a module, follow these instructions:
 
 1. Start FVTT and browse to the Game Modules tab in the Configuration and Setup menu.
-2. Head to the latest release and grab the link to the latest `module.json`, the latest release can be found here: https://github.com/Almightygir/fvtt-advanced-loot-sheet-pf1/releases/latest
+2. Head to the latest release and grab the link to the latest `module.json`, the latest release can be found here: https://github.com/Almightygir/fvtt-loot-sheet-npc-pf1/releases/latest
 3. Select the Install Module button and paste the link to the `module.json` file.
 4. Click Install and wait for installation to complete.
 5. Once installed, you can get the latest updates directly in foundry with the Update button.

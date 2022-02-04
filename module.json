@@ -1,14 +1,9 @@
 {
   "name": "lootsheetnpcpf1",
-  "title": "Advanced Loot Sheet Pathfinder1",
+  "title": "Loot Sheet NPC Pathfinder1",
   "description": "This module adds an additional NPC sheet which can be used for loot containers such as chests or shopkeepers.",
   "author": "Lee 'Almighty_gir' Devonald",
-  "authors": [
-    "Lee 'Almighty_gir' Devonald",
-    "Jan Ole Peek (ChalkOne)",
-    "Charles Miller (Kage))",
-    "Sven Werlen (Converted to PF1)"
-  ],
+  "authors": [],
   "flags": {},
   "version": "this is auto replaced",
   "minimumCoreVersion": "9",
