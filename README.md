@@ -1,4 +1,4 @@
-[![](https://img.shields.io/badge/Foundry-v0.9.0-informational)]()[![Github All Releases](https://img.shields.io/github/downloads/Almightygir/fvtt-loot-sheet-npc-5e/total.svg)]()[![Donate](https://img.shields.io/badge/Donate-BuyMeACoffee-green.svg)](https://ko-fi.com/almighty_gir)
+[![](https://img.shields.io/badge/Foundry-v0.9.0-informational)]()[![Github All Releases](https://img.shields.io/github/downloads/Almightygir/fvtt-loot-sheet-npc-5e/latest/module.zip)]()[![Donate](https://img.shields.io/badge/Donate-BuyMeACoffee-green.svg)](https://ko-fi.com/almighty_gir)
 
 # Loot Sheet NPC Pathfinder1
 This module adds an additional NPC sheet which can be used for loot containers such as chests. It also allows spells to be automatically converted into spell scrolls by dragging them onto this sheet.
