@@ -104,12 +104,14 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
       priceModifier = await this.actor.getFlag(LootSheetConstants.MODULENAME, "priceModifier");
     }
     
-    let totalItems = 0
-    let totalWeight = 0
-    let totalPrice = 0
+    let totalItems = 0;
+    let totalWeight = 0;
+    let totalPrice = 0;
+    let adjustedPrice = 0;
     let maxCapacity = await this.actor.getFlag(LootSheetConstants.MODULENAME, "maxCapacity") || 0;
     let maxLoad = await this.actor.getFlag(LootSheetConstants.MODULENAME, "maxLoad") || 0;
     let saleValue = await this.actor.getFlag(LootSheetConstants.MODULENAME, "saleValue") || 50;
+    let displaySaleValueEnabled = await this.actor.getFlag(LootSheetConstants.MODULENAME, "displaySaleValueEnabled");
     
     Object.keys(sheetData.actor.features).forEach( f => sheetData.actor.features[f].items.forEach( i => {  
       // specify if empty
@@ -117,9 +119,10 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
       const itemCharges = getProperty(i, "data.uses.value") != null ? getProperty(i, "data.uses.value") : 1;
       i.empty = itemQuantity <= 0 || (i.isCharged && itemCharges <= 0);
 
-      totalItems += itemQuantity
-      totalWeight += itemQuantity * i.data.weightConverted
-      totalPrice += itemQuantity * LootSheetActions.getItemCost(i)
+      totalItems += itemQuantity;
+      totalWeight += itemQuantity * i.data.weightConverted;
+      totalPrice += itemQuantity * LootSheetActions.getItemCost(i);
+      adjustedPrice += itemQuantity * LootSheetActions.getItemSaleValue(i, saleValue) / 100;
     }));
 
     sheetData.lootsheettype = lootsheettype;
@@ -127,15 +130,17 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
     sheetData.priceModifier = priceModifier;
     sheetData.rolltables = game.tables.contents;
     sheetData.canAct = game.user.playerId in sheetData.actor.data.permission && sheetData.actor.data.permission[game.user.playerId] == 2;
-    sheetData.totalItems = totalItems
-    sheetData.maxItems = maxCapacity > 0 ? " / " + maxCapacity : ""
-    sheetData.itemsWarning = maxCapacity <= 0 || maxCapacity >= totalItems ? "" : "warn"
-    sheetData.totalWeight = Math.ceil(totalWeight)
-    sheetData.maxWeight = maxLoad > 0 ? " / " + maxLoad : ""
-    sheetData.weightWarning = maxLoad <= 0 || maxLoad >= totalWeight ? "" : "warn"
-    sheetData.totalPrice = totalPrice
-    sheetData.weightUnit = game.settings.get("pf1", "units") == "metric" ? game.i18n.localize("PF1.Kgs") : game.i18n.localize("PF1.Lbs")
+    sheetData.totalItems = totalItems;
+    sheetData.maxItems = maxCapacity > 0 ? " / " + maxCapacity : "";
+    sheetData.itemsWarning = maxCapacity <= 0 || maxCapacity >= totalItems ? "" : "warn";
+    sheetData.totalWeight = Math.ceil(totalWeight);
+    sheetData.maxWeight = maxLoad > 0 ? " / " + maxLoad : "";
+    sheetData.weightWarning = maxLoad <= 0 || maxLoad >= totalWeight ? "" : "warn";
+    sheetData.totalPrice = totalPrice;
+    sheetData.weightUnit = game.settings.get("pf1", "units") == "metric" ? game.i18n.localize("PF1.Kgs") : game.i18n.localize("PF1.Lbs");
     sheetData.saleValue = saleValue < 0 ? 0 : saleValue;
+    sheetData.adjustedPrice = adjustedPrice;
+    sheetData.displaySaleValueEnabled = displaySaleValueEnabled;
         
     // workaround to get all flags
     const rolltableName = await this.actor.getFlag(LootSheetConstants.MODULENAME, "rolltable");
@@ -241,11 +246,24 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
     for(let i=0; i<flags.length; i++) {
       const name = flags[i][0].split(".")
       const value = flags[i][1]
-      if( name.length == 4 ) { // Ex : data.flags.lootsheetnpcpf1.dragEnabled
-        // check if has changed
-        if(this.actor.getFlag(name[2], name[3]) != value) {
+      // Ex : data.flags.lootsheetnpcpf1.dragEnabled
+      // check if has changed
+      if( name.length == 4 )
+      {
+        if(this.actor.getFlag(name[2], name[3]) != value)
+        {
           console.log(`Setting flag ${name[2]}.${name[3]} to ${value}`)
           await this.actor.setFlag(name[2], name[3], value)
+        }
+        //handle displaySaleValueEnabled
+        let flagValue = this.actor.getFlag(name[2], "displaySaleValueEnabled");
+        let formValue = Object.entries(formData).filter(f => f[0].startsWith("data.flags.lootsheetnpcpf1.displaySaleValueEnabled"));
+        if(formValue[0])
+        {
+          if(flagValue != formValue[0][1])
+          {
+            await this.actor.setFlag(name[2], "displaySaleValueEnabled", formValue[0][1]);
+          }
         }
       }
     }
@@ -594,15 +612,13 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
       title: game.i18n.localize("ls.convertLootTitle"),
       content: game.i18n.format("ls.convertLootMessage", {saleValue: this.actor.getFlag(LootSheetConstants.MODULENAME, "saleValue") || 50}),
       yes: async () => {
-        let totalGP = 0
-        let deleteList = []
-        let saleValue = (this.actor.getFlag(LootSheetConstants.MODULENAME, "saleValue") || 50) / 100;
+        let sheetData = await this.getData();
+        let totalGP = sheetData.adjustedPrice;
+        let funds = LootSheetActions.spreadFunds(totalGP, duplicate(this.actor.data.data.currency));
+        let deleteList = [];
         this.actor.items.forEach( item  => {
-          totalGP += LootSheetActions.getItemSaleValue(item, saleValue)
           deleteList.push(item.id)
         });
-
-        let funds = LootSheetActions.spreadFunds(totalGP, duplicate(this.actor.data.data.currency));
 
         await this.actor.update({ "data.currency": funds });
         await this.actor.deleteEmbeddedDocuments("Item", deleteList)

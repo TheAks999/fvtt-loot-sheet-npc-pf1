@@ -110,6 +110,8 @@
   "ls.maxLoadTooltip": "Massimo peso supportato dal bottino (vuoto o 0 = illimitato)",
   "ls.saleValue": "Valore di vendita",
   "ls.saleValueTooltip": "La percentuale di valore per cui verranno venduti i beni non commerciali (vuoto significa 50%)",
+  "ls.displaySaleValue": "Mostra il valore di vendita",
+  "ls.displaySaleValueTooltip": "Se abilitato, mostra all'utente il valore di vendita rettificato.",
   
   "ls.pp": "mp",
   "ls.gp": "mo",
@@ -124,6 +126,7 @@
   "ls.totalItems": "Nr. Oggetti",
   "ls.totalPrice": "Valore Totale",
   "ls.totalWeight": "Peso Totale",
+  "ls.adjustedPrice": "Valore di vendita",
   
   "ls.giveTitleSplit": "Dividi quantità",
   "ls.giveTitle": "Dai {item} a {actor}",

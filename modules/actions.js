@@ -400,24 +400,41 @@ export class LootSheetActions {
   /**
    * Returns the unidentified cost (if unidentified and specified) or the cost
    */
-  static getItemCost(item) {
-    if(!item) return 0
-    else return Number(item.data.identified || item.data.unidentified == null ? item.data.price : item.data.unidentified.price)
+  static getItemCost(item)
+  {
+    if(!item)
+    {
+      return 0
+    }
+    else
+    {
+      return Number(item.data.identified || item.data.unidentified == null ? item.data.price : item.data.unidentified.price)
+    }
   }
   
   /**
    * Returns the sale value of an item
    */
-  static getItemSaleValue(item, saleValue) {
-    if(item.type == "container") {
+  static getItemSaleValue(item, saleValue)
+  {
+    if(!item)
+    {
+      return 0;
+    }
+    if(item.type == "container")
+    {
       let total = 0;
-      item.items.forEach(i => total += LootSheetActions.getItemSaleValue(i))
+      item.items.forEach(i => total += LootSheetActions.getItemSaleValue(i));
       return total;
-    } else if (["weapon", "equipment", "consumable", "tool", "loot"].indexOf(item.type) >= 0) {
-      let itemCost = LootSheetActions.getItemCost(item.data)
-      if( item.data.data.subType !== "tradeGoods" )
+    }
+    else if (["weapon", "equipment", "consumable", "tool", "loot"].indexOf(item.type) >= 0)
+    {
+      let itemCost = LootSheetActions.getItemCost(item)
+      if( item.data.subType !== "tradeGoods" )
+      {
         itemCost = itemCost * saleValue;
-      return itemCost * item.data.data.quantity
+      }
+      return itemCost * item.data.quantity
     }
     return 0;
   }

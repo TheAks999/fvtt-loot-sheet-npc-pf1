@@ -110,6 +110,8 @@
   "ls.maxLoadTooltip": "Max weight that can be put in the loot (empty or 0 means unlimited)",
   "ls.saleValue": "Sale Value",
   "ls.saleValueTooltip": "The percentage of value that non trade goods will be sold for (empty means 50%)",
+  "ls.displaySaleValue": "Display Sale Value",
+  "ls.displaySaleValueTooltip": "If enabled, displays the adjusted sale value to the user.",
   
   "ls.pp": "pp",
   "ls.gp": "gp",
@@ -124,6 +126,7 @@
   "ls.totalItems": "Items (count)",
   "ls.totalPrice": "Total value",
   "ls.totalWeight": "Total weight",
+  "ls.adjustedPrice": "Sale value",
   
   "ls.giveTitleSplit": "Split quantity",
   "ls.giveTitle": "Give {item} to {actor}",

@@ -138,6 +138,7 @@ section.sheet-content.content {
 }
 
 .loot-sheet-npc.sheet.actor .inventory-list .item .item-price,
+.loot-sheet-npc.sheet.actor .inventory-list .item .adjusted-price,
 .loot-sheet-npc.sheet.actor .inventory-list .item .item-quantity {
 	flex: 0 0 100px;
 	color: #666;

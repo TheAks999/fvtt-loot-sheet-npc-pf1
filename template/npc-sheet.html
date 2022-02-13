@@ -176,6 +176,11 @@
               <div class="item-price">
                 <i class="fas fa-coins"> {{localize "ls.totalPrice"}}:</i> {{totalPrice}}
               </div>
+              {{#if data.flags.lootsheetnpcpf1.displaySaleValueEnabled}}
+              <div class="adjusted-price">
+                <i class="fas fa-coins"> {{localize "ls.adjustedPrice"}}:</i> {{adjustedPrice}}
+              </div>
+              {{/if}}
             </div>
             {{/ifeq}}
           </div>        

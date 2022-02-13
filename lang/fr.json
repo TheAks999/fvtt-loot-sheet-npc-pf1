@@ -109,6 +109,8 @@
   "ls.maxLoadTooltip": "Poids maximal qui peut être déposé dans le butin (vide ou 0 signifie aucune limite)",
   "ls.saleValue": "Valeur de vente",
   "ls.saleValueTooltip": "Le pourcentage de la valeur pour laquelle les biens non commerciaux seront vendus (vide signifie 50 %)",
+  "ls.displaySaleValue": "Afficher la valeur de vente",
+  "ls.displaySaleValueTooltip": "Si activé, affiche la valeur de vente ajustée à l'utilisateur.",
   
   "ls.pp": "pp",
   "ls.gp": "po",
@@ -123,6 +125,7 @@
   "ls.totalItems": "Nbr. éléments",
   "ls.totalPrice": "Valeur totale",
   "ls.totalWeight": "Poids total",
+  "ls.adjustedPrice": "Valeur de vente",
   
   "ls.giveTitleSplit": "Diviser la quantité",
   "ls.giveTitle": "Donner {item} à {actor}",
