@@ -423,8 +423,11 @@ export class LootSheetActions {
     }
     if(item.type == "container")
     {
-      let total = 0;
-      item.items.forEach(i => total += LootSheetActions.getItemSaleValue(i));
+      let total = LootSheetActions.getItemCost(item) * saleValue;
+      if(item.data.inventoryItems)
+      {
+        item.data.inventoryItems.forEach(i => total += LootSheetActions.getItemSaleValue(i, saleValue));
+      }
       return total;
     }
     else if (["weapon", "equipment", "consumable", "tool", "loot"].indexOf(item.type) >= 0)
