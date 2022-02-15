@@ -122,7 +122,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
       totalItems += itemQuantity;
       totalWeight += itemQuantity * i.data.weightConverted;
       totalPrice += itemQuantity * LootSheetActions.getItemCost(i);
-      adjustedPrice += itemQuantity * LootSheetActions.getItemSaleValue(i, saleValue) / 100;
+      adjustedPrice += itemQuantity * LootSheetActions.getItemSaleValue(i, saleValue / 100);
     }));
 
     sheetData.lootsheettype = lootsheettype;

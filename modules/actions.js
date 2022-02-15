@@ -432,14 +432,12 @@ export class LootSheetActions {
     }
     else if (["weapon", "equipment", "consumable", "tool", "loot"].indexOf(item.type) >= 0)
     {
-      let itemCost = LootSheetActions.getItemCost(item)
       if( item.data.subType !== "tradeGoods" )
       {
-        itemCost = itemCost * saleValue;
+        return LootSheetActions.getItemCost(item) * saleValue;
       }
-      return itemCost * item.data.quantity
+      return LootSheetActions.getItemCost(item);
     }
     return 0;
   }
-
 }
