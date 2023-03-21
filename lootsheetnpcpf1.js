@@ -56,7 +56,7 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
     
     const giver = game.actors.get(data.actorId)
     const receiver = game.actors.get(actorDestId)
-    const item = giver.getEmbeddedDocument("Item", data.data._id);
+    const item = giver.getEmbeddedDocument("Item", data._id);
     if(!item) return;
     
     // validate the type of item to be "moved" or "added"
@@ -81,14 +81,14 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
     
     let options = {}
     if (data.actorId === actorDestId) {
-      if(item.data.quantity == 1) {
+      if(item.quantity === 1) {
         ui.notifications.error(game.i18n.localize("ERROR.lsWhyGivingToYourself"));
         console.log("Loot Sheet | Ignoring giving something to same person")
         return false;
       }
       options['title'] = game.i18n.localize("ls.giveTitleSplit");
       options['acceptLabel'] = game.i18n.localize("ls.split");
-    } else if(item.data.quantity == 1) {
+    } else if(item.quantity === 1) {
       options['title'] = game.i18n.localize("ls.give");
       options['label'] = game.i18n.format("ls.giveContentSingle", {item: item.name, actor: receiver.name });
       options['quantity'] = 1
@@ -106,13 +106,13 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
     let d = new QuantityDialog((quantity) => {
     
       if( game.user.isGM ) {
-        LootSheetActions.giveItem(game.user, dta.actorId, actorDestId, dta.data._id, quantity)
+        LootSheetActions.giveItem(game.user, dta.actorId, actorDestId, dta._id, quantity)
       } else {
         const packet = {
           type: "give",
           userId: game.user._id,
           actorId: dta.actorId,
-          itemId: dta.data._id,
+          itemId: dta._id,
           targetActorId: actorDestId,
           processorId: gmId,
           quantity: quantity
@@ -138,7 +138,7 @@ Hooks.once("init", () => {
     "modules/lootsheetnpcpf1/template/dialog-price-modifier.html"]);
   
   Handlebars.registerHelper('ifeq', function(a, b, options) {
-    if (a == b) {
+    if (a === b) {
       return options.fn(this);
     }
     return options.inverse(this);
@@ -235,7 +235,7 @@ Hooks.on("getActorDirectoryEntryContext", (html, options) => {
       const actor = game.actors.get(li.data("entityId"))
       if(actor) { 
         await actor.setFlag("core", "sheetClass", "PF1.LootSheetPf1NPC");
-        let permissions = duplicate(actor.data.permission)
+        let permissions = duplicate(actor.permission)
         game.users.forEach((u) => {
           if (!u.isGM) { permissions[u.id] = 2 }
         });
@@ -244,7 +244,7 @@ Hooks.on("getActorDirectoryEntryContext", (html, options) => {
     },
     condition: li => {
       const actor = game.actors.get(li.data("entityId"))
-      return game.user.isGM && actor && actor.data.type === "npc" && !(actor.sheet instanceof LootSheetConstants.LootSheetPf1NPC) && actor.data.token.actorLink;
+      return game.user.isGM && actor && actor.type === "npc" && !(actor.sheet instanceof LootSheetConstants.LootSheetPf1NPC) && actor.token.actorLink;
     },
   });
   // Special case: actor is not linked => convert all defeated tokens!
@@ -254,27 +254,28 @@ Hooks.on("getActorDirectoryEntryContext", (html, options) => {
     callback: async function(li) {
       const actor = game.actors.get(li.data("entityId"))
       if(actor) { 
-        let tokens = game.scenes.active.data.tokens.filter(o => o.actorId == actor.id)
-        tokens.forEach( async function(t) {
+        let tokens = game.scenes.active.tokens.filter(o => o.actorId === actor.id)
+        for (const t of tokens)
+        {
           const effects = getProperty( t.actorData, "effects" )
           // to be considered dead, a token must have the "dead" overlay effect (either from combat tracker or directly)
           if( effects && effects.filter( e => [CONFIG.Combat.defeatedStatusId, "combat-utility-belt.dead"].indexOf(getProperty(e, "flags.core.statusId")) >= 0 ).length > 0) {
             let actor = canvas.tokens.get(t._id).actor
             if( !(actor.sheet instanceof LootSheetConstants.LootSheetPf1NPC) ) {
               await actor.setFlag("core", "sheetClass", "PF1.LootSheetPf1NPC");
-              let permissions = duplicate(actor.data.permission)
+              let permissions = duplicate(actor.permission)
               game.users.forEach((u) => {
                 if (!u.isGM) { permissions[u.id] = 2 }
               });
               await actor.update( { permission: permissions }, {diff: false});
             }
           }
-        });
+        }
       }
     },
     condition: li => {
       const actor = game.actors.get(li.data("entityId"))
-      return game.user.isGM && actor && actor.data.type === "npc" && !(actor.sheet instanceof LootSheetConstants.LootSheetPf1NPC) && !actor.data.token.actorLink;
+      return game.user.isGM && actor && actor.type === "npc" && !(actor.sheet instanceof LootSheetConstants.LootSheetPf1NPC) && !actor.token.actorLink;
     },
   });
 });

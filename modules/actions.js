@@ -57,12 +57,12 @@ export class LootSheetActions {
     item = item.data // migration to 0.8.x
     
     if(!quantity) {
-      quantity = item.data.quantity
+      quantity = item.quantity
     }
     
     // Move all items if we select more than the quantity.
-    if (item.data.quantity < quantity) {
-      quantity = item.data.quantity;
+    if (item.quantity < quantity) {
+      quantity = item.quantity;
     }
 
     let newItem = duplicate(item);
@@ -76,7 +76,7 @@ export class LootSheetActions {
     if(!item.flags.lootsheetnpcpf1 || !item.flags.lootsheetnpcpf1.infinite) {
       const update = {
         _id: itemId,
-        "data.quantity": item.data.quantity - quantity
+        "data.quantity": item.quantity - quantity
       };
 
       let removeEmptyStacks = game.settings.get("lootsheetnpcpf1", "removeEmptyStacks");
@@ -87,7 +87,7 @@ export class LootSheetActions {
       }
     }
 
-    newItem.data.quantity = quantity;
+    newItem.quantity = quantity;
     destination.createEmbeddedDocuments("Item", [newItem]);
     newItem.showName = LootSheetActions.getItemName(newItem)
     newItem.showCost = LootSheetActions.getItemCost(newItem)
@@ -121,7 +121,7 @@ export class LootSheetActions {
       itemId = itemId.substring(3)
       
       // Move all items if we select more than the quantity.
-      let coins = source.data.data.altCurrency[itemId]
+      let coins = source.system.altCurrency[itemId]
       if (coins < quantity) {
         quantity = coins;
       }
@@ -129,16 +129,16 @@ export class LootSheetActions {
       if (quantity == 0) return null;
 
       const srcUpdate = { data: { altCurrency: { } } };
-      srcUpdate.data.altCurrency[itemId] = source.data.data.altCurrency[itemId] - quantity;
+      srcUpdate.altCurrency[itemId] = source.system.altCurrency[itemId] - quantity;
       source.update(srcUpdate)
       
       const dstUpdate = { data: { altCurrency: { } } };
-      dstUpdate.data.altCurrency[itemId] = destination.data.data.altCurrency[itemId] + quantity;
+      dstUpdate.altCurrency[itemId] = destination.system.altCurrency[itemId] + quantity;
       destination.update(dstUpdate)
     }
     else {
       // Move all items if we select more than the quantity.
-      let coins = source.data.data.currency[itemId]
+      let coins = source.system.currency[itemId]
       if (coins < quantity) {
         quantity = coins;
       }
@@ -146,11 +146,11 @@ export class LootSheetActions {
       if (quantity == 0) return null;
 
       const srcUpdate = { data: { currency: { } } };
-      srcUpdate.data.currency[itemId] = source.data.data.currency[itemId] - quantity;
+      srcUpdate.currency[itemId] = source.system.currency[itemId] - quantity;
       source.update(srcUpdate)
       
       const dstUpdate = { data: { currency: { } } };
-      dstUpdate.data.currency[itemId] = destination.data.data.currency[itemId] + quantity;
+      dstUpdate.currency[itemId] = destination.system.currency[itemId] + quantity;
       destination.update(dstUpdate)
     }
     
@@ -198,9 +198,9 @@ export class LootSheetActions {
 
     if(container.getFlag("lootsheetnpcpf1", "lootsheettype") === "Merchant") {
       messageKey = "ls.chatSell"
-      let sellerFunds = duplicate(giver.data.data.currency)
+      let sellerFunds = duplicate(giver.system.currency)
       if(sellerFunds && moved.item.showCost > 0) {
-        if( moved.item.data.subType !== "tradeGoods" )
+        if( moved.item.subType !== "tradeGoods" )
           cost = cost / 2;
 
         const totalGP = cost * moved.quantity;
@@ -227,8 +227,8 @@ export class LootSheetActions {
 
 
     // If the buyer attempts to buy more then what's in stock, buy all the stock.
-    if (sellItem.data.quantity < quantity) {
-      quantity = sellItem.data.quantity;
+    if (sellItem.quantity < quantity) {
+      quantity = sellItem.quantity;
     }
 
     let sellerModifier = seller.getFlag("lootsheetnpcpf1", "priceModifier");
@@ -237,8 +237,8 @@ export class LootSheetActions {
     let itemCost = LootSheetActions.getItemCost(sellItem.data)
     itemCost = itemCost * sellerModifier;
     itemCost *= quantity;
-    let buyerFunds = duplicate(buyer.data.data.currency);
-    let buyerFundsAlt = duplicate(buyer.data.data.altCurrency);
+    let buyerFunds = duplicate(buyer.system.currency);
+    let buyerFundsAlt = duplicate(buyer.system.altCurrency);
     const conversionRate = {
       "pp": 10,
       "gp": 1,
@@ -380,7 +380,7 @@ export class LootSheetActions {
       if(moved) {
         LootSheetActions.chatMessage(
           speaker, receiver,
-          game.i18n.format("ls.chatGive", {giver: giver.data.name, receiver: receiver.data.name, quantity: quantity, item: moved.item.showName}),
+          game.i18n.format("ls.chatGive", {giver: giver.name, receiver: receiver.name, quantity: quantity, item: moved.item.showName}),
           moved.item);
       }
     } else {
@@ -394,7 +394,7 @@ export class LootSheetActions {
    */
   static getItemName(item) {
     if(!item) return ""
-    else return item.data.identified || !item.data.unidentified || !item.data.unidentified.name || item.data.unidentified.name.length == 0 ? item.name : item.data.unidentified.name
+    else return item.identified || !item.unidentified || !item.unidentified.name || item.unidentified.name.length == 0 ? item.name : item.unidentified.name
   }
 
   /**
@@ -408,7 +408,7 @@ export class LootSheetActions {
     }
     else
     {
-      return Number(item.data.identified || item.data.unidentified == null ? item.data.price : item.data.unidentified.price)
+      return Number(item.identified || item.unidentified == null ? item.price : item.unidentified.price)
     }
   }
   
@@ -424,15 +424,15 @@ export class LootSheetActions {
     if(item.type == "container")
     {
       let total = LootSheetActions.getItemCost(item) * saleValue;
-      if(item.data.inventoryItems)
+      if(item.inventoryItems)
       {
-        item.data.inventoryItems.forEach(i => total += LootSheetActions.getItemSaleValue(i, saleValue));
+        item.inventoryItems.forEach(i => total += LootSheetActions.getItemSaleValue(i, saleValue));
       }
       return total;
     }
     else if (["weapon", "equipment", "consumable", "tool", "loot"].indexOf(item.type) >= 0)
     {
-      if( item.data.subType !== "tradeGoods" )
+      if( item.subType !== "tradeGoods" )
       {
         return LootSheetActions.getItemCost(item) * saleValue;
       }

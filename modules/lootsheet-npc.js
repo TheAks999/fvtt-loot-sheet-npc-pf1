@@ -11,11 +11,11 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
   get template() {
     // adding the #equals and #unequals handlebars helper
     Handlebars.registerHelper('equals', function(arg1, arg2, options) {
-      return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+      return (arg1 === arg2) ? options.fn(this) : options.inverse(this);
     });
 
     Handlebars.registerHelper('unequals', function(arg1, arg2, options) {
-      return (arg1 != arg2) ? options.fn(this) : options.inverse(this);
+      return (arg1 !== arg2) ? options.fn(this) : options.inverse(this);
     });
 
     Handlebars.registerHelper('lootsheetprice', function(basePrice, modifier) {
@@ -50,8 +50,8 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
    * Returns the loot price that the player is aware of
    */
   getLootPrice(item) {
-    if(game.user.isGM || item.data.identified) {
-      return item.data.price;
+    if(game.user.isGM || item.identified) {
+      return item.price;
     }
     return LootSheetActions.getItemCost(item);
   }
@@ -60,7 +60,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
    * Returns the loot name that the player knows
    */
   getLootName(item) {
-    if(game.user.isGM || item.data.identified) {
+    if(game.user.isGM || item.identified) {
       return item.name;
     }
     return LootSheetActions.getItemName(item);
@@ -72,7 +72,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
     const sheetData = await super.getData();
     
     // https://foundryvtt.wiki/en/migrations/foundry-core-0_8_x
-    sheetData.flags = sheetData.actor.data.flags
+    sheetData.flags = sheetData.actor.flags
 
     // Prepare GM Settings
     sheetData.flags.loot = this._prepareGMSettings(sheetData.actor.data);
@@ -120,7 +120,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
       i.empty = itemQuantity <= 0 || (i.isCharged && itemCharges <= 0);
 
       totalItems += itemQuantity;
-      totalWeight += itemQuantity * i.data.weightConverted;
+      totalWeight += itemQuantity * i.weightConverted;
       totalPrice += itemQuantity * LootSheetActions.getItemCost(i);
       adjustedPrice += itemQuantity * LootSheetActions.getItemSaleValue(i, saleValue / 100);
     }));
@@ -129,7 +129,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
     sheetData.rolltable = rolltable;
     sheetData.priceModifier = priceModifier;
     sheetData.rolltables = game.tables.contents;
-    sheetData.canAct = game.user.playerId in sheetData.actor.data.permission && sheetData.actor.data.permission[game.user.playerId] == 2;
+    sheetData.canAct = game.user.playerId in sheetData.actor.permission && sheetData.actor.permission[game.user.playerId] === 2;
     sheetData.totalItems = totalItems;
     sheetData.maxItems = maxCapacity > 0 ? " / " + maxCapacity : "";
     sheetData.itemsWarning = maxCapacity <= 0 || maxCapacity >= totalItems ? "" : "warn";
@@ -137,7 +137,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
     sheetData.maxWeight = maxLoad > 0 ? " / " + maxLoad : "";
     sheetData.weightWarning = maxLoad <= 0 || maxLoad >= totalWeight ? "" : "warn";
     sheetData.totalPrice = totalPrice;
-    sheetData.weightUnit = game.settings.get("pf1", "units") == "metric" ? game.i18n.localize("PF1.Kgs") : game.i18n.localize("PF1.Lbs");
+    sheetData.weightUnit = game.settings.get("pf1", "units") === "metric" ? game.i18n.localize("PF1.Kgs") : game.i18n.localize("PF1.Lbs");
     sheetData.saleValue = saleValue < 0 ? 0 : saleValue;
     sheetData.adjustedPrice = adjustedPrice;
     sheetData.displaySaleValueEnabled = displaySaleValueEnabled;
@@ -248,9 +248,9 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
       const value = flags[i][1]
       // Ex : data.flags.lootsheetnpcpf1.dragEnabled
       // check if has changed
-      if( name.length == 4 )
+      if( name.length === 4 )
       {
-        if(this.actor.getFlag(name[2], name[3]) != value)
+        if(this.actor.getFlag(name[2], name[3]) !== value)
         {
           console.log(`Setting flag ${name[2]}.${name[3]} to ${value}`)
           await this.actor.setFlag(name[2], name[3], value)
@@ -260,7 +260,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
         let formValue = Object.entries(formData).filter(f => f[0].startsWith("data.flags.lootsheetnpcpf1.displaySaleValueEnabled"));
         if(formValue[0])
         {
-          if(flagValue != formValue[0][1])
+          if(flagValue !== formValue[0][1])
           {
             await this.actor.setFlag(name[2], "displaySaleValueEnabled", formValue[0][1]);
           }
@@ -299,7 +299,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
     const shopQtyFormula = await this.actor.getFlag(LootSheetConstants.MODULENAME, "shopQty") || "1";
     const itemQtyFormula = await this.actor.getFlag(LootSheetConstants.MODULENAME, "itemQty") || "1";
     
-    if (!rolltableName || rolltableName.length == 0) {
+    if (!rolltableName || rolltableName.length === 0) {
       return ui.notifications.error(game.i18n.format("ERROR.lsChooseTable"));
     }
     
@@ -313,7 +313,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
 
     if (clearInventory) {
 
-      let currentItems = this.actor.data.items.map(i => i._id);
+      let currentItems = this.actor.items.map(i => i._id);
       await this.actor.deleteEmbeddedDocuments("Item", currentItems);
     }
     //return;
@@ -325,28 +325,28 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
     for (let i = 0; i < shopQtyRoll.result; i++) {
       const rollResult = await rolltable.roll({ async: false });
       console.log(rollResult)
-      let newItem = game.items.get(rollResult.results[0].data.resultId);
+      let newItem = game.items.get(rollResult.results[0].resultId);
       if (!newItem || newItem === null) {
         // search in compendium
         for (const pack of game.packs) {
-          if (pack.documentClass.documentName == "Item") {
-            newItem = await pack.getDocument(rollResult.results[0].data.resultId);
+          if (pack.documentClass.documentName === "Item") {
+            newItem = await pack.getDocument(rollResult.results[0].resultId);
             if (newItem) {
               break;
             }
           }
         }
         if (!newItem || newItem === null) {
-          console.log(`Loot Sheet | No item found "${rollResult.results[0].data.resultId}".`);
-          return ui.notifications.error(`No item found "${rollResult.results[0].data.resultId}".`);
+          console.log(`Loot Sheet | No item found "${rollResult.results[0].resultId}".`);
+          return ui.notifications.error(`No item found "${rollResult.results[0].resultId}".`);
         }
       }
 
       let itemQtyRoll = new Roll(itemQtyFormula);
       await itemQtyRoll.roll({ async: false });
       console.log(`Loot Sheet | Adding ${itemQtyRoll.result} x ${newItem.name}`)
-      const newData = newItem.data.toJSON()
-      newData.data.quantity = Number(itemQtyRoll.result);
+      const newData = newItem.toJSON()
+      newData.quantity = Number(itemQtyRoll.result);
       await this.actor.createEmbeddedDocuments("Item", [newData]);
     }
   }
@@ -429,7 +429,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
       let itemName = $(event.currentTarget).parents(".item").find("h4").text()
 
       let options = { acceptLabel: game.i18n.localize("ls.purchase") }
-      if(quantity == 1) {
+      if(quantity === 1) {
         options['title'] = game.i18n.localize("ls.purchase")
         options['label'] = game.i18n.format("ls.buyContent", { item: itemName })
         options['quantity'] = 1
@@ -485,7 +485,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
       let itemName = $(event.currentTarget).parents(".item").find("h4").text()
 
       let options = { acceptLabel: game.i18n.localize("ls.loot") }
-      if(quantity == 1) {
+      if(quantity === 1) {
         options['title'] = game.i18n.localize("ls.loot")
         options['label'] = game.i18n.format("ls.lootContent", { item: itemName })
         options['quantity'] = 1
@@ -614,7 +614,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
       yes: async () => {
         let sheetData = await this.getData();
         let totalGP = sheetData.adjustedPrice;
-        let funds = LootSheetActions.spreadFunds(totalGP, duplicate(this.actor.data.data.currency));
+        let funds = LootSheetActions.spreadFunds(totalGP, duplicate(this.actor.currency));
         let deleteList = [];
         this.actor.items.forEach( item  => {
           deleteList.push(item.id)
@@ -644,14 +644,14 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
     //console.log("Loot Sheet | actorData", actorData);
     // Calculate owners
     for (let u in actorData.permission) {
-      if (u != "default" && actorData.permission[u] == 2) {
+      if (u !== "default" && actorData.permission[u] === 2) {
         //console.log("Loot Sheet | u in actorData.permission", u);
         let player = game.users.get(u);
         if(player) {
           //console.log("Loot Sheet | player", player);
-          let actor = game.actors.get(player.data.character);
+          let actor = game.actors.get(player.character);
           //console.log("Loot Sheet | actor", actor);
-          if (actor && (player.data.role === 1 || player.data.role === 2)) owners.push(actor);
+          if (actor && (player.role === 1 || player.role === 2)) owners.push(actor);
         }
       }
     }
@@ -660,10 +660,10 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
     if (owners.length === 0) return;
 
     // Calculate split of currency
-    let currencySplit = duplicate(actorData.data.currency);
-    let altCurrencySplit = duplicate(actorData.data.altCurrency);
-    let currencyRemains = duplicate(actorData.data.currency);
-    let altCurrencyRemains = duplicate(actorData.data.altCurrency);
+    let currencySplit = duplicate(actorData.currency);
+    let altCurrencySplit = duplicate(actorData.altCurrency);
+    let currencyRemains = duplicate(actorData.currency);
+    let altCurrencyRemains = duplicate(actorData.altCurrency);
     //console.log("Loot Sheet | Currency data", currencySplit);
     for (let c in currencySplit) {
       if (owners.length) {
@@ -685,10 +685,10 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
 
       msg = [];
       console.log(u)
-      let currency = u.data.data.currency;
-      let altCurrency = u.data.data.altCurrency;
-      let newCurrency = duplicate(u.data.data.currency);
-      let newAltCurrency = duplicate(u.data.data.altCurrency);
+      let currency = u.system.currency;
+      let altCurrency = u.system.altCurrency;
+      let newCurrency = duplicate(u.system.currency);
+      let newAltCurrency = duplicate(u.system.altCurrency);
 
       //console.log("Loot Sheet | Current Currency", currency);
       for (let c in currency) {
@@ -708,8 +708,8 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
       this.actor.update({ "data.currency": currencyRemains, "data.altCurrency": altCurrencyRemains });
       
       // Create chat message for coins received
-      if (msg.length != 0) {
-        let message = game.i18n.format("ls.receives", {actor: u.data.name});
+      if (msg.length !== 0) {
+        let message = game.i18n.format("ls.receives", {actor: u.name});
         message += msg.join(",");
         ChatMessage.create({
           user: game.user.id,
@@ -731,7 +731,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
    */
   _onCyclePermissionProficiency(event) {
     event.preventDefault();
-    //console.log("Loot Sheet | this.actor.data.permission", this.actor.data.permission);
+    //console.log("Loot Sheet | this.actor.permission", this.actor.permission);
     
     let actorData = this.actor.data;
 
@@ -752,13 +752,13 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
     let playerId = field[0].name;
 
     //console.log("Loot Sheet | Current actor: " + playerId);
-    //console.log(`Current entity permissions are: ${JSON.stringify(this.actor.data.permission)}`);
+    //console.log(`Current entity permissions are: ${JSON.stringify(this.actor.permission)}`);
     
-    let permissions = duplicate(this.actor.data.permission)
+    let permissions = duplicate(this.actor.permission)
     permissions[playerId] = newLevel;
     //console.log(`About to change permissions are: ${JSON.stringify(permissions)}`);
     this.actor.update( { permission: permissions });    
-    //console.log(`Newly changed entity permissions are: ${JSON.stringify(this.actor.data.permission)}`);
+    //console.log(`Newly changed entity permissions are: ${JSON.stringify(this.actor.permission)}`);
     this._onSubmit(event);
   }
 
@@ -766,7 +766,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
   _onBatchPermissionChange(event) {
     event.preventDefault();
     let newLevel = Number($(event.currentTarget).attr("data-perm"))
-    let permissions = duplicate(this.actor.data.permission)
+    let permissions = duplicate(this.actor.permission)
     game.users.forEach((u) => {
       if (!u.isGM) { permissions[u.id] = newLevel }
     });
@@ -832,7 +832,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
       }
       
       if (i.flags.lootsheetnpcpf1 && i.flags.lootsheetnpcpf1.infinite) {
-        i.data.quantity = 1
+        i.quantity = 1
       }
       
       // Features
@@ -898,20 +898,20 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
     //console.log("Loot Sheet _prepareGMSettings | actorData.permission", actorData.permission);
 
     for (let u of users) {
-      //console.log("Loot Sheet | Checking user " + u.data.name, u);
+      //console.log("Loot Sheet | Checking user " + u.name, u);
 
       //check if the user is a player 
-      if (u.data.role === 1 || u.data.role === 2) {
+      if (u.role === 1 || u.role === 2) {
 
         // get the name of the primary actor for a player
-        const actor = game.actors.get(u.data.character);
+        const actor = game.actors.get(u.character);
         //console.log("Loot Sheet | Checking actor", actor);
 
         if (actor) {
 
-          u.actor = actor.data.name;
-          u.actorId = actor.data._id;
-          u.playerId = u.data._id;
+          u.actor = actor.name;
+          u.actorId = actor._id;
+          u.playerId = u._id;
 
           //Check if there are default permissions to the actor
           if (typeof actorData.permission.default !== "undefined") {
@@ -920,9 +920,9 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
 
             u.lootPermission = actorData.permission.default;
 
-            if (actorData.permission.default === 2 && !owners.includes(actor.data._id)) {
+            if (actorData.permission.default === 2 && !owners.includes(actor._id)) {
 
-              owners.push(actor.data._id);
+              owners.push(actor._id);
             }
 
           } else {
@@ -932,14 +932,14 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
           }
 
           //if the player has some form of permission to the object update the actorData
-          if (u.data._id in actorData.permission && !owners.includes(actor.data._id)) {
+          if (u._id in actorData.permission && !owners.includes(actor._id)) {
             //console.log("Loot Sheet | Found individual actor permission");
 
-            u.lootPermission = actorData.permission[u.data._id];
-            //console.log("Loot Sheet | assigning " + actorData.permission[u.data._id] + " permission to hidden field");
+            u.lootPermission = actorData.permission[u._id];
+            //console.log("Loot Sheet | assigning " + actorData.permission[u._id] + " permission to hidden field");
 
-            if (actorData.permission[u.data._id] === 2) {
-              owners.push(actor.data._id);
+            if (actorData.permission[u._id] === 2) {
+              owners.push(actor._id);
             }
           }
 
@@ -953,8 +953,8 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
     }
 
     // calculate the split of coins between all owners of the sheet.
-    let currencySplit = duplicate(actorData.data.currency);
-    let altCurrencySplit = duplicate(actorData.data.altCurrency);
+    let currencySplit = duplicate(actorData.currency);
+    let altCurrencySplit = duplicate(actorData.altCurrency);
     for (let c in currencySplit) {
       if (owners.length) {
         currencySplit[c] = Math.floor(currencySplit[c] / owners.length) + " / " + Math.floor(altCurrencySplit[c] / owners.length)
@@ -964,7 +964,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
     }
     
     let loot = {}
-    loot.warning = actorData.permission.default != 0
+    loot.warning = actorData.permission.default !== 0
     loot.players = players;
     loot.ownerCount = owners.length;
     loot.currency = currencySplit;
@@ -999,7 +999,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
       console.log(await Item.fromDropData(data))
       let sourceActor = game.actors.get(data.actorId);
       let targetActor = this.token ? canvas.tokens.get(this.token.id).actor : this.actor;
-      LootSheetActions.dropOrSellItem(game.user, targetActor, sourceActor, data.data._id)
+      LootSheetActions.dropOrSellItem(game.user, targetActor, sourceActor, data._id)
     } 
     // users don't have the rights for the transaction => ask GM to do it
     else {
@@ -1010,12 +1010,12 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC {
         }
       });
       
-      if(targetGm && data.actorId && data.data && data.data._id) {
+      if(targetGm && data.actorId && data.data && data._id) {
         const packet = {
           type: "drop",
           userId: game.user.id,
           actorId: data.actorId,
-          itemId: data.data._id,
+          itemId: data._id,
           tokenId: this.token ? this.token.id : undefined,
           targetActorId: this.token ? undefined : this.actor.id,
           processorId: targetGm.id
