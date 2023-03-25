@@ -47,7 +47,7 @@
         <section class="primary-body">
 
           <div class="tab biography" data-tab="biography" data-group="primary">
-            {{editor content=data.details.biography.value target="data.details.biography.value" button=true owner=owner editable=editable}}
+            {{editor biographyHTML target="biographyHTML" button=true owner=owner editable=editable}}
           </div>
           <div class="tab inventory active" data-tab="inventory" data-group="primary">
 
@@ -59,9 +59,9 @@
                   <h3>
                     {{localize "PF1.Currency"}}
                   </h3>
-                  {{#each data.currency as |v k|}}
+                  {{#each system.currency as |v k|}}
                     <label class="denomination {{k}}">{{ lookup ../config.currencies k }}</label>
-                    <input type="text" name="data.currency.{{k}}" value="{{v}}" data-dtype="Number"/>
+                    <input type="text" name="system.currency.{{k}}" value="{{v}}" data-dtype="Number"/>
                     <label class="item currency-controls" data-item-id="{{k}}">
                       {{#if ../canAct}}
                         {{#unless ../../isGM}}
@@ -75,9 +75,9 @@
                   <h3>
                     {{localize "PF1.WeightlessCurrency"}}
                   </h3>
-                  {{#each data.altCurrency as |v k|}}
+                  {{#each system.altCurrency as |v k|}}
                     <label class="denomination {{k}}">{{ lookup ../config.currencies k }}</label>
-                    <input type="text" name="data.altCurrency.{{k}}" value="{{v}}" data-dtype="Number"/>
+                    <input type="text" name="system.altCurrency.{{k}}" value="{{v}}" data-dtype="Number"/>
                     <label class="item currency-controls" data-item-id="wl_{{k}}">
                       {{#if ../canAct}}
                         {{#unless ../../isGM}}
@@ -108,23 +108,23 @@
                   </li>
                   <ol class="item-list">
                     {{#each section.items as |item iid|}}
-                    <li class="item flexrow" data-item-id="{{item._id}}" data-item-quantity="{{item.data.quantity}}">
+                    <li class="item flexrow" data-item-id="{{item._id}}" data-item-quantity="{{item.quantity}}">
                       <div class="item-name flexrow rollable">
                         <div class="item-image" style="background-image: url({{item.img}})"></div>
-                        <h4 class="rollable{{#if item.empty}} strikethrough-text{{/if}}">{{ lootsheetname item.name item.data.quantity item.flags.lootsheetnpcpf1.infinite}}</h4>
+                        <h4 class="rollable{{#if item.empty}} strikethrough-text{{/if}}">{{ lootsheetname item.name item.quantity item.flags.lootsheetnpcpf1.infinite}}</h4>
                       </div>
                       {{#if ../../isGM}}
                       <div class="item-detail item-identified">
                         <a class="item-control item-identify"><span>{{{item.labels.identified}}}</span></a>
                       </div>
                       {{/if}}
-                      <div class="item-detail item-weight"><span>{{ lootsheetweight item.data.quantity item.data.weightConverted }} {{ ../../weightUnit }}</span></div>
+                      <div class="item-detail item-weight"><span>{{ lootsheetweight item.quantity item.weightConverted }} {{ ../../weightUnit }}</span></div>
                       <div class="item-detail item-weight"><span>{{ lootsheetprice item.showPrice ../../priceModifier }}<span></div>
                       <div class="item-controls">
                         {{#ifeq ../../lootsheettype "Loot"}}
                           {{#if ../../canAct}}
                             {{#unless ../../isGM}}
-                              {{#if data.quantity}}
+                              {{#if item.quantity}}
                               <a class="item-control item-loot" title="{{localize "ls.lootItem"}}"><i class="fas fa-gem"></i></a>
                               {{/if}}
                             {{/unless}}
@@ -134,7 +134,7 @@
                         {{#ifeq ../../lootsheettype "Merchant"}}
                           {{#if ../../canAct}}
                             {{#unless ../../isGM}}
-                              {{#if data.quantity}}
+                              {{#if item.quantity}}
                               <a class="item-control item-buy" title="{{localize "ls.buyItem"}}"><i class="fas fa-dollar-sign"></i></a>
                               {{/if}}
                             {{/unless}}
@@ -176,7 +176,7 @@
               <div class="item-price">
                 <i class="fas fa-coins"> {{localize "ls.totalPrice"}}:</i> {{totalPrice}}
               </div>
-              {{#if data.flags.lootsheetnpcpf1.displaySaleValueEnabled}}
+              {{#if flags.lootsheetnpcpf1.displaySaleValueEnabled}}
               <div class="adjusted-price">
                 <i class="fas fa-coins"> {{localize "ls.adjustedPrice"}}:</i> {{adjustedPrice}}
               </div>

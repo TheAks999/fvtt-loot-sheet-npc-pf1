@@ -54,7 +54,6 @@ export class LootSheetActions {
       console.log(source, destination, itemId)
       return null;
     }
-    item = item.data // migration to 0.8.x
     
     if(!quantity) {
       quantity = item.quantity
@@ -76,11 +75,11 @@ export class LootSheetActions {
     if(!item.flags.lootsheetnpcpf1 || !item.flags.lootsheetnpcpf1.infinite) {
       const update = {
         _id: itemId,
-        "data.quantity": item.quantity - quantity
+        quantity: item.quantity - quantity
       };
 
       let removeEmptyStacks = game.settings.get("lootsheetnpcpf1", "removeEmptyStacks");
-      if (update["data.quantity"] === 0 && removeEmptyStacks) {
+      if (update.quantity === 0 && removeEmptyStacks) {
         source.deleteEmbeddedDocuments("Item", [itemId]);
       } else {
         source.updateEmbeddedDocuments("Item", [update]);
@@ -126,13 +125,13 @@ export class LootSheetActions {
         quantity = coins;
       }
       
-      if (quantity == 0) return null;
+      if (quantity === 0) return null;
 
-      const srcUpdate = { data: { altCurrency: { } } };
+      const srcUpdate = { system: { altCurrency: { } } };
       srcUpdate.altCurrency[itemId] = source.system.altCurrency[itemId] - quantity;
       source.update(srcUpdate)
       
-      const dstUpdate = { data: { altCurrency: { } } };
+      const dstUpdate = { system: { altCurrency: { } } };
       dstUpdate.altCurrency[itemId] = destination.system.altCurrency[itemId] + quantity;
       destination.update(dstUpdate)
     }
@@ -143,13 +142,13 @@ export class LootSheetActions {
         quantity = coins;
       }
       
-      if (quantity == 0) return null;
+      if (quantity === 0) return null;
 
-      const srcUpdate = { data: { currency: { } } };
+      const srcUpdate = { system: { currency: { } } };
       srcUpdate.currency[itemId] = source.system.currency[itemId] - quantity;
       source.update(srcUpdate)
       
-      const dstUpdate = { data: { currency: { } } };
+      const dstUpdate = { system: { currency: { } } };
       dstUpdate.currency[itemId] = destination.system.currency[itemId] + quantity;
       destination.update(dstUpdate)
     }
@@ -166,7 +165,7 @@ export class LootSheetActions {
   static lootItem(speaker, container, looter, itemId, quantity) {
     console.log("Loot Sheet | LootSheetActions.lootItem")
     
-    if (itemId.length == 2 || itemId.startsWith("wl_")) {
+    if (itemId.length === 2 || itemId.startsWith("wl_")) {
       let moved = LootSheetActions.moveCoins(container, looter, itemId, quantity);
 
       if (moved) {
@@ -193,7 +192,7 @@ export class LootSheetActions {
     //console.log("Loot Sheet | Drop or sell item")
     let moved = LootSheetActions.moveItem(giver, container, itemId);
     if(!moved) return;
-    let messageKey = ""
+    let messageKey;
     let cost = moved.item.showCost;
 
     if(container.getFlag("lootsheetnpcpf1", "lootsheettype") === "Merchant") {
@@ -205,7 +204,7 @@ export class LootSheetActions {
 
         const totalGP = cost * moved.quantity;
         sellerFunds = LootSheetActions.spreadFunds(totalGP, sellerFunds);
-        await giver.update({ "data.currency": sellerFunds });
+        await giver.update({ "system.currency": sellerFunds });
       }
     } else {
       messageKey = "ls.chatDrop"
@@ -234,7 +233,7 @@ export class LootSheetActions {
     let sellerModifier = seller.getFlag("lootsheetnpcpf1", "priceModifier");
     if (!sellerModifier) sellerModifier = 1.0;
 
-    let itemCost = LootSheetActions.getItemCost(sellItem.data)
+    let itemCost = LootSheetActions.getItemCost(sellItem)
     itemCost = itemCost * sellerModifier;
     itemCost *= quantity;
     let buyerFunds = duplicate(buyer.system.currency);
@@ -275,13 +274,13 @@ export class LootSheetActions {
     // cost can be paid with funds
     if (itemCost <= buyerFundsAsGold) {
       buyerFunds = LootSheetActions.removeCostFromFunds(buyer, itemCost, buyerFunds, conversionRate);
-      await buyer.update({ "data.currency": buyerFunds });
+      await buyer.update({ "system.currency": buyerFunds });
     }
     // cost must also be paid with weightless funds
     else {
       buyerFunds = LootSheetActions.removeCostFromFunds(buyer, buyerFundsAsGold, buyerFunds, conversionRate);
       buyerFundsAlt = LootSheetActions.removeCostFromFunds(buyer, itemCost - buyerFundsAsGold, buyerFundsAlt, conversionRate);
-      await buyer.update({ "data.currency": buyerFunds, "data.altCurrency": buyerFundsAlt });
+      await buyer.update({ "system.currency": buyerFunds, "data.altCurrency": buyerFundsAlt });
     }
     
 
@@ -394,7 +393,7 @@ export class LootSheetActions {
    */
   static getItemName(item) {
     if(!item) return ""
-    else return item.identified || !item.unidentified || !item.unidentified.name || item.unidentified.name.length == 0 ? item.name : item.unidentified.name
+    else return item.identified || !item.unidentified || !item.unidentified.name || item.unidentified.name.length === 0 ? item.name : item.unidentified.name
   }
 
   /**
@@ -421,7 +420,7 @@ export class LootSheetActions {
     {
       return 0;
     }
-    if(item.type == "container")
+    if(item.type === "container")
     {
       let total = LootSheetActions.getItemCost(item) * saleValue;
       if(item.inventoryItems)
