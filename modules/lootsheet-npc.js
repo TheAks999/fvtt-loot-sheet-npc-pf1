@@ -205,10 +205,10 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC
     if (this.options.editable)
     {
       // Toggle Permissions
-      html.find('.permission-proficiency').click(ev => this._onCyclePermissionProficiency(ev));
+      html.find('.permission-proficiency').click(ev => this._onCycleOwnershipProficiency(ev));
 
       // Toggle Permissions (batch)
-      html.find('.permission-batch').click(ev => this._onBatchPermissionChange(ev));
+      html.find('.permission-batch').click(ev => this._onBatchOwnershipChange(ev));
 
       // Split Coins
       html.find('.split-coins').click(ev => this._distributeCoins(ev));
@@ -727,7 +727,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC
 
   /**
    * Handle distribution of coins. This function splits all coins
-   * into all characters/players that have "act" permissions.
+   * into all characters/players that have "act" ownership.
    *
    * @private
    */
@@ -744,7 +744,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC
     {
       if (u !== "default" && this.actor.ownership[u] === 2)
       {
-        debug_log("Loot Sheet | u in lootSheetActor.permission", u);
+        debug_log("Loot Sheet | u in lootSheetActor.ownership", u);
         let player = game.users.get(u);
         if (player)
         {
@@ -850,13 +850,13 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC
   /* -------------------------------------------- */
 
   /**
-   * Handle cycling permissions
+   * Handle cycling ownership
    * @private
    */
-  _onCyclePermissionProficiency(event)
+  _onCycleOwnershipProficiency(event)
   {
     event.preventDefault();
-    debug_log("Loot Sheet | this.actor.permission", this.actor.permission);
+    debug_log("Loot Sheet | this.actor.ownership", this.actor.ownership);
 
     let field = $(event.currentTarget).siblings('input[type="hidden"]');
 
@@ -878,30 +878,30 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC
     let playerId = field[0].name;
 
     debug_log("Loot Sheet | Current actor: " + playerId);
-    debug_log(`Current entity permissions are: ${JSON.stringify(this.actor.ownership)}`);
+    debug_log(`Current entity ownerships are: ${JSON.stringify(this.actor.ownership)}`);
 
-    let permissions = duplicate(this.actor.ownership)
-    permissions[playerId] = newLevel;
-    debug_log(`About to change permissions are: ${JSON.stringify(permissions)}`);
-    this.data.update({permission: permissions});
-    debug_log(`Newly changed entity permissions are: ${JSON.stringify(this.actor.ownership)}`);
+    let ownership = duplicate(this.actor.ownership)
+    ownership[playerId] = newLevel;
+    debug_log(`About to change ownerships are: ${JSON.stringify(ownership)}`);
+    this.actor.update({ownership: ownership});
+    debug_log(`Newly changed entity ownerships are: ${JSON.stringify(this.actor.ownership)}`);
     this._onSubmit(event);
   }
 
 
-  _onBatchPermissionChange(event)
+  _onBatchOwnershipChange(event)
   {
     event.preventDefault();
     let newLevel = Number($(event.currentTarget).attr("data-perm"))
-    let permissions = duplicate(this.actor.ownership)
+    let ownership = duplicate(this.actor.ownership)
     game.users.forEach((u) =>
     {
       if (!u.isGM)
       {
-        permissions[u.id] = newLevel
+        ownership[u.id] = newLevel
       }
     });
-    this.actor.update({permission: permissions});
+    this.actor.update({ownership: ownership});
     this._onSubmit(event);
   }
 
@@ -1011,10 +1011,10 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC
 
 
   /**
-   * Get the font-awesome icon used to display the permission level.
+   * Get the font-awesome icon used to display the ownership level.
    * @private
    */
-  _getPermissionIcon(level)
+  _getOwnershipIcon(level)
   {
     const icons = {
       0: '<i class="far fa-circle"></i>',
@@ -1027,11 +1027,11 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC
   /* -------------------------------------------- */
 
   /**
-   * Get the font-awesome icon used to display the permission level.
+   * Get the font-awesome icon used to display the ownership level.
    * @private
    */
-  _getPermissionDescription(level) {
-    debug_log("_getPermissionDescription")
+  _getOwnershipDescription(level) {
+    debug_log("_getOwnershipDescription")
     const description = {
       0: game.i18n.localize("ls.permissionNoaccess"),
       1: game.i18n.localize("ls.permissionLimited"),
@@ -1056,7 +1056,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC
       owners = [];
     let user_list = game.users.contents;
 
-    debug_log("_prepareGMSettings | lootSheetActor.permissions", lootSheetActor.ownership);
+    debug_log("_prepareGMSettings | lootSheetActor.ownership", lootSheetActor.ownership);
 
     for (let user of user_list)
     {
@@ -1082,7 +1082,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC
       if (typeof lootSheetActor.ownership.default !== "undefined")
       {
 
-        debug_log("default permissions", lootSheetActor.ownership.default);
+        debug_log("default ownership", lootSheetActor.ownership.default);
 
         user.lootPermission = lootSheetActor.ownership.default;
 
@@ -1093,17 +1093,17 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC
       }
       else
       {
-        debug_log("assigning 0 permission to hidden field");
+        debug_log("assigning 0 ownership to hidden field");
         user.lootPermission = 0;
       }
 
       if (user._id in lootSheetActor.ownership && !owners.includes(playerActor._id))
       {
-        debug_log("Found individual actor permission");
+        debug_log("Found individual actor ownership");
 
         user.lootPermission = lootSheetActor.ownership[user._id];
         
-        debug_log("Assigning " + lootSheetActor.ownership[user._id] + " permission to hidden field");
+        debug_log("Assigning " + lootSheetActor.ownership[user._id] + " ownership to hidden field");
 
         if (lootSheetActor.ownership[user._id] === 2)
         {
@@ -1111,8 +1111,8 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC
         }
       }
 
-      user.icon = this._getPermissionIcon(user.lootPermission);
-      user.lootPermissionDescription = this._getPermissionDescription(user.lootPermission);
+      user.icon = this._getOwnershipIcon(user.lootPermission);
+      user.lootPermissionDescription = this._getOwnershipDescription(user.lootPermission);
       players.push(user);
     }
 
