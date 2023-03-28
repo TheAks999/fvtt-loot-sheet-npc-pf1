@@ -135,12 +135,12 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC
     Object.keys(sheetData.actor.features).forEach(f => sheetData.actor.features[f].items.forEach(i =>
     {
       // specify if empty
-      const itemQuantity = getProperty(i, "data.quantity") != null ? getProperty(i, "data.quantity") : 1;
-      const itemCharges = getProperty(i, "data.uses.value") != null ? getProperty(i, "data.uses.value") : 1;
+      const itemQuantity = getProperty(i, "quantity") != null ? getProperty(i, "quantity") : 1;
+      const itemCharges = getProperty(i, "uses.value") != null ? getProperty(i, "uses.value") : 1;
       i.empty = itemQuantity <= 0 || (i.isCharged && itemCharges <= 0);
 
       totalItems += itemQuantity;
-      totalWeight += itemQuantity * i.weightConverted;
+      totalWeight += itemQuantity * i.weight.converted.value;
       totalPrice += itemQuantity * LootSheetActions.getItemCost(i);
       adjustedPrice += itemQuantity * LootSheetActions.getItemSaleValue(i, saleValue / 100);
     }));
