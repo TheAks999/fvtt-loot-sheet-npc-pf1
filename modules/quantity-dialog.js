@@ -1,3 +1,4 @@
+import {debug_log} from "./logging.js";
 
 export class QuantityDialog extends Dialog {
   constructor(callback, options) {
@@ -7,6 +8,7 @@ export class QuantityDialog extends Dialog {
 
     let applyChanges = false;
     const chooseQuantity = 'quantity' in options ? "" : '<input type=number min="1" id="quantity" name="quantity" value="1">'
+
     super({
       title: 'title' in options ? options['title'] : game.i18n.localize("ls.quantity"),
       content: `
@@ -30,13 +32,14 @@ export class QuantityDialog extends Dialog {
       default: "yes",
       close: () => {
         if (applyChanges) {
-          var quantity = Number('quantity' in options ? options['quantity'] : document.getElementById('quantity').value)
+          let quantity = Number('quantity' in options ? options['quantity'] : document.getElementById('quantity').value)
 
           if (isNaN(quantity)) {
             console.log("Loot Sheet | Item quantity invalid");
             return ui.notifications.error(game.i18n.localize("ERROR.lsItemInvalidQuantity"));
           }
 
+          debug_log("Item Quantity Change", quantity);
           callback(quantity);
 
         }

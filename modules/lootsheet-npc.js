@@ -2,8 +2,10 @@ import {LootSheetActions} from "./actions.js";
 import {LootSheetConstants} from "./constants.js";
 import {QuantityDialog} from "./quantity-dialog.js";
 import {debug_log} from "./logging.js";
+import {ActorSheetPFNPC} from "/systems/pf1/pf1.js"
 
-export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC
+
+export class LootSheetPf1NPC extends ActorSheetPFNPC
 {
 
   static DEFAULT_TOKEN = "icons/svg/mystery-man.svg"
@@ -106,10 +108,10 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC
       lootsheettype = "Loot"
       await this.actor.setFlag(LootSheetConstants.MODULENAME, "lootsheettype", lootsheettype);
     }
-    debug_log(`Loot Sheet | Loot sheet type = ${lootsheettype}`);
+    debug_log(`Loot sheet type = ${lootsheettype}`);
 
     let rolltable = await this.actor.getFlag(LootSheetConstants.MODULENAME, "rolltable");
-    debug_log(`Loot Sheet | Rolltable = ${rolltable}`);
+    debug_log(`Rolltable = ${rolltable}`);
 
 
     let priceModifier = 1.0;
@@ -183,7 +185,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC
    */
   async activateListeners(html)
   {
-    console.log("Loot Sheet | activateListeners")
+    debug_log("activateListeners")
     super.activateListeners(html);
 
     const dragEnabled = await this.actor.getFlag(LootSheetConstants.MODULENAME, "dragEnabled");
@@ -246,7 +248,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC
   async _merchantSettingChange(event, html)
   {
     event.preventDefault();
-    console.log("Loot Sheet | Merchant settings changed", event);
+    debug_log("Merchant settings changed", event);
 
     if (!game.user.isGM)
     {
@@ -258,7 +260,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC
 
     if (expectedKeys.indexOf(targetKey) === -1)
     {
-      console.log(`Loot Sheet | Error changing stettings for "${targetKey}".`);
+      debug_log(`Error changing settings for "${targetKey}".`);
       return ui.notifications.error(game.i18n.format("ERROR.lsChangingSettingsFor", {name: targetKey}));
     }
 
@@ -290,7 +292,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC
       {
         if (this.actor.getFlag(name[2], name[3]) !== value)
         {
-          console.log(`Setting flag ${name[2]}.${name[3]} to ${value}`)
+          debug_log(`Setting flag ${name[2]}.${name[3]} to ${value}`)
           await this.actor.setFlag(name[2], name[3], value)
         }
         //handle displaySaleValueEnabled
@@ -532,56 +534,69 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC
   _lootItem(event)
   {
     event.preventDefault();
-    debug_log("Loot Sheet | _lootItem")
+    debug_log("_lootItem")
 
+    // Find the GM
     let targetGm = null;
-    game.users.forEach((u) =>
+    game.users.forEach((user) =>
     {
-      if (u.isGM && u.active && u.viewedScene === game.user.viewedScene)
+      if (user.isGM && user.active && user.viewedScene === game.user.viewedScene)
       {
-        targetGm = u;
+        targetGm = user;
       }
     });
 
+    // Could not find the GM
     if (!targetGm)
     {
       return ui.notifications.error(game.i18n.localize("ERROR.lsNoActiveGM"));
     }
 
+    debug_log("_lootItem | GM", targetGm)
+
     if (game.user.actorId)
     {
+      debug_log("_lootItem | Actor ID", game.user.actorId);
       let itemId = $(event.currentTarget).parents(".item").attr("data-item-id");
       let quantity = Number($(event.currentTarget).parents(".item").attr("data-item-quantity"));
-      let itemName = $(event.currentTarget).parents(".item").find("h4").text()
+      let itemName = $(event.currentTarget).parents(".item").find("h4").text();
 
-      let options = {acceptLabel: game.i18n.localize("ls.loot")}
+      let options = {acceptLabel: game.i18n.localize("ls.loot")};
+
       if (quantity === 1)
       {
-        options['title'] = game.i18n.localize("ls.loot")
-        options['label'] = game.i18n.format("ls.lootContent", {item: itemName})
-        options['quantity'] = 1
+        options['title'] = game.i18n.localize("ls.loot");
+        options['label'] = game.i18n.format("ls.lootContent", {item: itemName});
+        options['quantity'] = 1;
       }
       else
       {
-        options['title'] = game.i18n.format("ls.lootTitle", {item: itemName})
+        options['title'] = game.i18n.format("ls.lootTitle", {item: itemName});
       }
 
-      let d = new QuantityDialog((quantity) =>
-      {
-        const packet = {
-          type: "loot",
-          userId: game.user.id,
-          actorId: game.user.actorId,
-          tokenId: this.token ? this.token.id : undefined,
-          targetActorId: this.token ? undefined : this.actor.id,
-          itemId: itemId,
-          quantity: quantity,
-          processorId: targetGm.id
-        };
-        console.log("LootSheetPf1", "Sending loot request to " + targetGm.name, packet);
-        game.socket.emit(LootSheetConstants.SOCKET, packet);
-      }, options);
-      d.render(true);
+      debug_log("_lootItem | Options", options);
+
+      let dialog = new QuantityDialog(
+        (quantity) =>
+        {
+          const packet = {
+            type: "loot",
+            userId: game.user.id,
+            actorId: game.user.actorId,
+            tokenId: this.token ? this.token.id : undefined,
+            targetActorId: this.token ? undefined : this.actor.id,
+            itemId: itemId,
+            quantity: quantity,
+            processorId: targetGm.id
+          };
+
+          console.log("LootSheetPf1", "Sending loot request to " + targetGm.name, packet);
+          game.socket.emit(LootSheetConstants.SOCKET, packet);
+        },
+        options
+      );
+
+      dialog.render(true);
     }
     else
     {
@@ -1030,7 +1045,8 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC
    * Get the font-awesome icon used to display the ownership level.
    * @private
    */
-  _getOwnershipDescription(level) {
+  _getOwnershipDescription(level)
+  {
     debug_log("_getOwnershipDescription")
     const description = {
       0: game.i18n.localize("ls.permissionNoaccess"),
@@ -1102,7 +1118,7 @@ export class LootSheetPf1NPC extends game.pf1.applications.ActorSheetPFNPC
         debug_log("Found individual actor ownership");
 
         user.lootPermission = lootSheetActor.ownership[user._id];
-        
+
         debug_log("Assigning " + lootSheetActor.ownership[user._id] + " ownership to hidden field");
 
         if (lootSheetActor.ownership[user._id] === 2)

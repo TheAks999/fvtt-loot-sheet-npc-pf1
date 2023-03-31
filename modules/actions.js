@@ -1,3 +1,6 @@
+import {debug_log} from "./logging.js";
+import {LootSheetConstants} from "./constants.js";
+
 /*************************
  * Global static actions 
  *************************
@@ -8,24 +11,30 @@ export class LootSheetActions {
    * Displays a message into the chat log
    */
   static chatMessage(speaker, owner, message, item) {
-    if (game.settings.get("lootsheetnpcpf1", "buyChat")) {
+    debug_log(speaker, owner, message, item);
+    let buyChat = game.settings.get(LootSheetConstants.MODULENAME, "buyChat");
+    if (buyChat) {
+
       if (item) {
-        message = `<div class="pf1 chat-card item-card" data-actor-id="${owner._id}" data-item-id="${item._id}">
+        message = `<div class="pf1 chat-card item-card" data-actor-id="${owner.id}" data-item-id="${item.id}">
                     <header class="card-header flexrow">
                         <img src="${item.img}" title="${item.showName}" width="36" height="36">
                         <h3 class="item-name">${item.showName}</h3>
                     </header>
                     <div class="card-content"><p>${message}</p></div></div>`;
       } else {
-        message = `<div class="pf1 chat-card item-card" data-actor-id="${owner._id}">
+        message = `<div class="pf1 chat-card item-card" data-actor-id="${owner.id}">
                     <div class="card-content"><p>${message}</p></div></div>`;
       }
+
+      debug_log("Message", message);
+
       ChatMessage.create({
-        user: game.user._id,
-        speaker: {
-          actor: speaker,
-          alias: speaker.name
-        },
+        // user: game.user,
+        // speaker: {
+        //   actor: speaker,
+        //   alias: speaker.name
+        // },
         content: message
       });
     }
@@ -46,8 +55,9 @@ export class LootSheetActions {
    * Moves an item from a source actor to a destination actor
    */
   static moveItem(source, destination, itemId, quantity) {
-    //console.log("Loot Sheet | moveItem")
+    debug_log("moveItem")
     let item = source.getEmbeddedDocument("Item", itemId);
+    debug_log("moveItem - Item", item);
     
     if(!item) {
       ui.notifications.warn(game.i18n.format("ERROR.lsInvalidMove", { actor: source.name }));
@@ -56,13 +66,16 @@ export class LootSheetActions {
     }
     
     if(!quantity) {
-      quantity = item.quantity
+      quantity = item.system.quantity;
     }
-    
+
     // Move all items if we select more than the quantity.
-    if (item.quantity < quantity) {
-      quantity = item.quantity;
+
+    if (item.system.quantity < quantity) {
+      quantity = item.system.quantity;
     }
+
+    debug_log("moveItem - quantity", quantity);
 
     let newItem = duplicate(item);
     
@@ -72,13 +85,17 @@ export class LootSheetActions {
     }
 
     // decrease the quantity (unless infinite)
-    if(!item.flags.lootsheetnpcpf1 || !item.flags.lootsheetnpcpf1.infinite) {
+    let isInfinite = item.flags?.lootsheetnpcpf1?.infinite;
+
+    if(!isInfinite) {
+      debug_log("moveItem - Is Not Infinite", item.flags);
       const update = {
-        _id: itemId,
-        quantity: item.quantity - quantity
+        id: itemId,
+        quantity: item.system.quantity - quantity
       };
 
-      let removeEmptyStacks = game.settings.get("lootsheetnpcpf1", "removeEmptyStacks");
+      let removeEmptyStacks = game.settings.get(LootSheetConstants.MODULENAME, "removeEmptyStacks");
+      debug_log("moveItem - Remove Empty?", removeEmptyStacks, item.system.quantity, quantity, update.quantity);
       if (update.quantity === 0 && removeEmptyStacks) {
         source.deleteEmbeddedDocuments("Item", [itemId]);
       } else {
@@ -163,10 +180,12 @@ export class LootSheetActions {
    * A looter (target actor) takes an item from a container (source actor)
    */
   static lootItem(speaker, container, looter, itemId, quantity) {
-    console.log("Loot Sheet | LootSheetActions.lootItem")
-    
+    debug_log("LootSheetActions.lootItem")
+
+    debug_log("Looting Item", itemId);
     if (itemId.length === 2 || itemId.startsWith("wl_")) {
       let moved = LootSheetActions.moveCoins(container, looter, itemId, quantity);
+      debug_log("Is Moved?", moved);
 
       if (moved) {
         LootSheetActions.chatMessage(
@@ -174,8 +193,10 @@ export class LootSheetActions {
           game.i18n.format("ls.chatLootCoins", { buyer: looter.name, quantity: moved.quantity, currency: game.i18n.localize("ls." + itemId) }));
       }
     }
+
     else {
       let moved = LootSheetActions.moveItem(container, looter, itemId, quantity);
+      debug_log("Is Moved?", moved);
       if(!moved) return;
 
       LootSheetActions.chatMessage(

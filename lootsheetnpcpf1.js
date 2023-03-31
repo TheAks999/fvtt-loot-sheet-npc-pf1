@@ -229,7 +229,7 @@ Hooks.once("init", () =>
      *******************************************/
     game.socket.on(LootSheetConstants.SOCKET, data =>
     {
-        console.log("Loot Sheet | Socket Message: ", data);
+        debug_log("Socket Message: ", data);
         if (game.user.isGM && data.processorId === game.user.id)
         {
             let user = game.users.get(data.userId);
@@ -275,6 +275,7 @@ Hooks.once("init", () =>
                 LootSheetActions.giveItem(user, data.actorId, data.targetActorId, data.itemId, data.quantity);
             }
         }
+
         if (data.type === "error" && data.targetId === game.user.actorId)
         {
             console.log("Loot Sheet | Transaction Error: ", data.message);
